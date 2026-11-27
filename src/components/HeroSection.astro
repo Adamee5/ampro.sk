@@ -62,15 +62,17 @@ const rows = ["1", "2", "3", "4"];
   .hero {
     --frame: 1.75rem;
     position: relative;
-    padding: clamp(0.75rem, 2vw, 1.5rem) clamp(0.5rem, 2vw, 2rem) clamp(1.5rem, 3vw, 2.5rem);
+    /* The sheet edge sits exactly on the page grid edge (global.css body grid). */
+    padding: clamp(0.75rem, 2vw, 1.5rem) var(--grid-pad, 1rem) clamp(1.5rem, 3vw, 2.5rem);
   }
 
   /* The sheet: outer trim line + inner frame, coordinates in the margin. */
   .sheet {
     position: relative;
+    max-width: calc(var(--grid-max, 80rem) - 2 * var(--grid-pad, 1rem));
     padding: var(--frame);
     border: 1px solid var(--color-border-strong);
-    background: color-mix(in oklch, var(--color-background) 88%, var(--color-surface-elevated));
+    background: color-mix(in oklab, var(--color-background) 88%, var(--color-surface-elevated));
   }
 
   .sheet__inner {
@@ -92,6 +94,8 @@ const rows = ["1", "2", "3", "4"];
     }
 
     .sheet__text {
+      position: relative;
+      z-index: 2;
       padding-inline-end: clamp(2rem, 3.5vw, 3.5rem);
     }
 
@@ -108,11 +112,6 @@ const rows = ["1", "2", "3", "4"];
     }
   }
 
-  @media (min-width: 80rem) {
-    .sheet__inner {
-      grid-template-columns: 45fr 2px 55fr;
-    }
-  }
 
   .coords {
     position: absolute;
@@ -132,9 +131,28 @@ const rows = ["1", "2", "3", "4"];
     flex: 1;
   }
 
+  /* Coordinates span the whole sheet, so each cell covers two of the page
+     grid's 12 columns (one of 4 on phones) – the borders sit on the hairlines. */
   .coords--top {
-    inset: 0 var(--frame) auto;
+    inset: 0 0 auto;
     height: var(--frame);
+  }
+
+  @media (max-width: 63.999rem) {
+    .coords--top li:nth-child(n + 5) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 39.999rem) {
+    .coords--left {
+      display: none;
+    }
+
+    .sheet {
+      padding-inline: 0;
+      border-inline: 0;
+    }
   }
 
   .coords--top li + li {
@@ -162,9 +180,10 @@ const rows = ["1", "2", "3", "4"];
 
   .hero__title {
     margin: 1rem 0 0;
-    max-width: 14ch;
-    font-size: clamp(2.375rem, 1.1rem + 4.6vw, 5rem);
-    line-height: 1.02;
+    /* em, not ch: ch differs between Poppins and its fallback (CLS) */
+    max-width: 9.5em;
+    font-size: clamp(2.25rem, 1.2rem + 4.2vw, 4.5rem);
+    line-height: 1.04;
     letter-spacing: -0.035em;
     text-wrap: balance;
     color: var(--color-foreground);
@@ -172,7 +191,7 @@ const rows = ["1", "2", "3", "4"];
 
   .hero__lead {
     margin: 1.5rem 0 0;
-    max-width: 52ch;
+    max-width: 31em;
     font-size: clamp(1rem, 0.95rem + 0.3vw, 1.125rem);
     line-height: 1.7;
     text-wrap: pretty;
@@ -288,12 +307,13 @@ const rows = ["1", "2", "3", "4"];
         center / 1.5px 100% no-repeat;
     }
 
+    /* runs right only, through the drawing – never across text */
     .sheet__axis::after {
       content: "";
       position: absolute;
       top: 72%;
-      left: -100vw;
-      width: 200vw;
+      left: 0;
+      width: 100vw;
       height: 1.5px;
       background: repeating-linear-gradient(
         to right,

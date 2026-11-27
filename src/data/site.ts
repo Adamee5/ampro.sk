@@ -45,7 +45,12 @@ const SKIP_KEYS = new Set(["href", "moreHref", "src", "image", "slug", "recipien
 function typeset<T>(value: T, key = ""): T {
   if (typeof value === "string") {
     if (SKIP_KEYS.has(key) || /^(\/|https?:|mailto:)/.test(value) || value.includes("@")) return value;
-    return value.replace(NBSP_AFTER, "$1\u00A0").replace(NBSP_NUMBER, "$1\u00A0") as T;
+    return value
+      .replace(NBSP_AFTER, "$1\u00A0")
+      .replace(NBSP_NUMBER, "$1\u00A0")
+      // a unit never wraps away from its number: 4 800 €, 15 %, 150 m²
+      .replace(/(\d) (?=€|%|m²)/g, "$1\u00A0")
+      .replace(/(\d) (?=\d{3}\b)/g, "$1\u00A0") as T;
   }
   if (Array.isArray(value)) return value.map((item) => typeset(item, key)) as T;
   if (value && typeof value === "object") {
@@ -87,11 +92,12 @@ export const site = {
   keywords: settings.keywords,
   googleSiteVerification: settings.googleSiteVerification,
   gtmId: settings.analytics.gtmId,
+  // Referencie join the navigation once the CMS has at least 3 projects.
   nav: [
     { href: "/konfigurator/", label: "Cena projektu" },
     { href: "/energeticky-certifikat/", label: "Energetický certifikát" },
     { href: "/pre-firmy/", label: "Pre firmy" },
-    { href: "/referencie/", label: "Referencie" },
+    ...(projects.length >= 3 ? [{ href: "/referencie/", label: "Referencie" }] : []),
     { href: "/kontakt/", label: "Kontakt" },
   ],
   social: settings.social,

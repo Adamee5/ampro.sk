@@ -117,12 +117,14 @@ const { items, title = "Časté otázky" } = Astro.props;
     transition: transform var(--duration-standard) var(--ease-out-soft);
   }
 
+  /* plus → minus by fading the vertical bar (no rotation – motion tokens) */
   .faq__icon::after {
     transform: rotate(90deg);
+    transition: opacity var(--duration-standard) var(--ease-standard);
   }
 
   .faq__item[open] .faq__icon::after {
-    transform: rotate(0deg);
+    opacity: 0;
   }
 
   .faq__answer {

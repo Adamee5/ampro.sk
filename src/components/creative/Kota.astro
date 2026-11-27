@@ -121,6 +121,20 @@ const { value, note, tone = "design", class: className } = Astro.props;
     }
   }
 
+  /* Re-measure: a page script adds .is-redraw when the value changes (the
+     configurator price) – the line is pulled again in 600 ms. */
+  @media (prefers-reduced-motion: no-preference) {
+    .kota.is-redraw {
+      animation-name: kota-draw;
+      animation-duration: 600ms;
+      animation-timing-function: var(--ease-draft);
+      animation-fill-mode: both;
+      animation-timeline: auto;
+      animation-range-start: normal;
+      animation-range-end: normal;
+    }
+  }
+
   @keyframes kota-draw {
     from {
       background-size: 0% 1.5px;

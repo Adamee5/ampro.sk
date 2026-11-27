@@ -81,8 +81,8 @@ const style = colors.map((c, i) => `--shader-color-${i}: ${c}`).join("; ");
 
   .shader-stage__fallback {
     background:
-      radial-gradient(60% 80% at 30% 20%, color-mix(in oklch, var(--shader-color-2) 45%, transparent), transparent 70%),
-      radial-gradient(50% 60% at 80% 90%, color-mix(in oklch, var(--shader-color-3) 30%, transparent), transparent 70%),
+      radial-gradient(60% 80% at 30% 20%, color-mix(in oklab, var(--shader-color-2) 45%, transparent), transparent 70%),
+      radial-gradient(50% 60% at 80% 90%, color-mix(in oklab, var(--shader-color-3) 30%, transparent), transparent 70%),
       linear-gradient(160deg, var(--shader-color-0), var(--shader-color-1));
   }
 

@@ -9,6 +9,7 @@ import { withBase } from "@/lib/navigation";
 import SocialLinks from "./SocialLinks.astro";
 
 const sheet = sheetFor(Astro.url.pathname);
+const isHome = sheet.number === "AM-01";
 const person = site.company.contacts[0];
 const hasSocial = Object.values(site.social).some(Boolean);
 const date = new Date().toLocaleDateString("sk-SK", { month: "2-digit", year: "numeric" }).replace(/\s/g, "");
@@ -20,7 +21,7 @@ const date = new Date().toLocaleDateString("sk-SK", { month: "2-digit", year: "n
     <div class="block">
       <div class="block__brand">
         <p class="block__wordmark"><strong>AM</strong>pro.SK</p>
-        <p class="block__tagline"><span class="text-accent">Projekcia</span> · <span class="text-energy-accent">Energetika budov</span></p>
+        <p class="block__tagline"><span class="text-primary">Projekcia</span> · <span class="text-energy">Energetika budov</span></p>
       </div>
 
       <dl class="block__cells tabular">
@@ -30,7 +31,7 @@ const date = new Date().toLocaleDateString("sk-SK", { month: "2-digit", year: "n
         </div>
         <div class="cell">
           <dt>Oprávnenie</dt>
-          <dd class="text-energy-accent">
+          <dd class="text-energy">
             <a href={site.credentials.registerUrl} target="_blank" rel="noopener">{site.credentials.oso}<span class="sr-only"> – overiť v registri SKSI (otvorí sa v novom okne)</span></a>
           </dd>
         </div>
@@ -54,8 +55,8 @@ const date = new Date().toLocaleDateString("sk-SK", { month: "2-digit", year: "n
           <dd>{sheet.number} · {sheet.title}</dd>
         </div>
         <div class="cell">
-          <dt>Mierka · dátum</dt>
-          <dd>1:100 · {date}</dd>
+          <dt>{isHome ? "Mierka · dátum" : "Dátum"}</dt>
+          <dd>{isHome ? `1:100 · ${date}` : date}</dd>
         </div>
         <div class="cell">
           <dt>Odpoveď</dt>
@@ -65,24 +66,27 @@ const date = new Date().toLocaleDateString("sk-SK", { month: "2-digit", year: "n
     </div>
 
     <div class="mt-6 flex flex-col gap-4 text-xs sm:flex-row sm:items-center sm:justify-between">
-      <p class="leading-6">© {new Date().getFullYear()} {site.company.legalName}. Všetky práva vyhradené.</p>
-      {hasSocial && <SocialLinks variant="card" align="left" class="[&_a]:border-white/20 [&_a]:text-white" />}
+      <p class="leading-6">© {new Date().getFullYear()} {site.company.legalName.replace(/\.$/, "")}. Všetky práva vyhradené.</p>
+      {hasSocial && <SocialLinks variant="card" align="left" />}
       <p class="leading-6">
-        Created by{" "}<a href="https://lukaschylik.dev/" class="text-white underline decoration-white/30 underline-offset-4 hover:decoration-white">Lukáš Chylík</a>
+        Created by{" "}<a href="https://lukaschylik.dev/" class="inline-flex min-h-11 items-center text-foreground underline decoration-border-strong underline-offset-4 hover:decoration-foreground">Lukáš Chylík</a>
       </p>
     </div>
   </div>
 </footer>
 
 <style>
+  /* The title block is ink on the same paper as the sheet (both themes). */
   .footer {
-    background: var(--color-footer-bg);
-    color: var(--color-footer-text);
+    border-top: 1.5px solid var(--color-line);
+    background: var(--color-background);
+    color: var(--color-muted);
   }
 
   .block {
     display: grid;
-    border: 1.5px solid oklch(1 0 0 / 0.55);
+    border: 2px solid var(--color-line);
+    background: var(--color-surface-elevated);
   }
 
   @media (min-width: 64rem) {
@@ -96,13 +100,13 @@ const date = new Date().toLocaleDateString("sk-SK", { month: "2-digit", year: "n
     align-content: center;
     gap: 0.5rem;
     padding: 1.5rem;
-    border-bottom: 1px solid oklch(1 0 0 / 0.25);
+    border-bottom: 1px solid var(--color-border-strong);
   }
 
   @media (min-width: 64rem) {
     .block__brand {
       border-bottom: 0;
-      border-right: 1px solid oklch(1 0 0 / 0.25);
+      border-right: 1.5px solid var(--color-line);
     }
   }
 
@@ -112,7 +116,7 @@ const date = new Date().toLocaleDateString("sk-SK", { month: "2-digit", year: "n
     font-weight: 300;
     letter-spacing: -0.035em;
     line-height: 1;
-    color: oklch(0.98 0 0);
+    color: var(--color-foreground);
   }
 
   .block__wordmark strong {
@@ -135,8 +139,8 @@ const date = new Date().toLocaleDateString("sk-SK", { month: "2-digit", year: "n
 
   .cell {
     padding: 0.875rem 1rem;
-    border-right: 1px solid oklch(1 0 0 / 0.18);
-    border-bottom: 1px solid oklch(1 0 0 / 0.18);
+    border-right: 1px solid var(--color-border-strong);
+    border-bottom: 1px solid var(--color-border-strong);
   }
 
   .cell dt {
@@ -144,7 +148,7 @@ const date = new Date().toLocaleDateString("sk-SK", { month: "2-digit", year: "n
     font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: oklch(0.8 0 0 / 0.85);
+    color: var(--color-muted);
   }
 
   .cell dd {
@@ -152,16 +156,16 @@ const date = new Date().toLocaleDateString("sk-SK", { month: "2-digit", year: "n
     margin: 0.3rem 0 0;
     font-size: 0.875rem;
     line-height: 1.5;
-    color: oklch(0.97 0 0);
+    color: var(--color-foreground);
   }
 
   .cell a {
     display: inline-flex;
     align-items: center;
-    min-height: 1.5rem;
+    min-height: 2.75rem;
     color: inherit;
     text-decoration: underline;
-    text-decoration-color: oklch(1 0 0 / 0.3);
+    text-decoration-color: var(--color-border-strong);
     text-underline-offset: 3px;
     word-break: break-word;
   }
@@ -174,7 +178,7 @@ const date = new Date().toLocaleDateString("sk-SK", { month: "2-digit", year: "n
     font-weight: 600;
   }
 
-  .cell :global(.text-energy-accent) a {
-    color: var(--color-energy-accent);
+  .cell .text-energy a {
+    color: var(--color-energy);
   }
 </style>

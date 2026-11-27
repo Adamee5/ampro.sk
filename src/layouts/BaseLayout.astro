@@ -51,7 +51,10 @@ const poppins = [
   ["Bold", 700],
 ] as const;
 // Poppins is shown in the hero next to a photo (the LCP), so no font preload.
-const fontPreloads: string[] = [];
+// The LCP is text on every page (no hero photo), so the two faces of the
+// first screen are preloaded – they arrive before first paint and the swap
+// cannot re-wrap the hero (CLS). ~9 kB each.
+const fontPreloads: string[] = preload ? [] : [asset("fonts/Poppins-SemiBold.woff2"), asset("fonts/Poppins-Regular.woff2")];
 // Local fallbacks with Poppins' metrics, so swapping in the real font does
 // not move the text (no layout shift). Arial, Helvetica, Liberation Sans and
 // Arimo share Arial's metrics (Windows, macOS, Linux incl. Lighthouse).

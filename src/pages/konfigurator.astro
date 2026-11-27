@@ -172,6 +172,16 @@ const defaultRange = `Rozpätie ${formatEuro(round50(defaultSum * (1 - accuracy 
         </a>
         <p class="mt-3 text-center text-xs text-muted">{site.credentials.responseTime}</p>
       </aside>
+
+      <!-- Phones: the summary is far below the options, so the price rides
+           along at the bottom while choosing (the summary keeps the live
+           region; this bar is a plain link to it). -->
+      <a class="pricebar tabular" href="#summary-title">
+        <span class="pricebar__label">Orientačná cena</span>
+        <strong data-pricebar>{formatEuro(round50(defaultSum))}</strong>
+        <small>±{accuracy} %</small>
+        <Icon name="arrow-down" variant="mini" class="ml-auto h-5 w-5" />
+      </a>
     </div>
 
     <div class="mx-auto mt-14 max-w-3xl sm:mt-20">
@@ -189,6 +199,51 @@ const defaultRange = `Rozpätie ${formatEuro(round50(defaultSum * (1 - accuracy 
 </BaseLayout>
 
 <style>
+  .pricebar {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: var(--z-sticky);
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    min-height: 3.5rem;
+    padding: 0.9rem 1rem calc(0.9rem + env(safe-area-inset-bottom));
+    border-top: 1.5px solid var(--color-line);
+    background: var(--color-surface-elevated);
+    color: var(--color-foreground);
+    text-decoration: none;
+  }
+
+  .pricebar__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .pricebar strong {
+    font-size: 1.125rem;
+  }
+
+  .pricebar small {
+    font-size: 0.8125rem;
+    color: var(--color-primary);
+  }
+
+  @media (min-width: 64rem) {
+    .pricebar {
+      display: none;
+    }
+  }
+
+  /* keep the page end (footer) reachable above the bar */
+  @media (max-width: 63.999rem) {
+    :global(body:has(.pricebar)) {
+      padding-bottom: 3.5rem;
+    }
+  }
+
   .prefill-note {
     display: flex;
     gap: calc(var(--spacing) * 3);
@@ -291,7 +346,7 @@ const defaultRange = `Rozpätie ${formatEuro(round50(defaultSum * (1 - accuracy 
   .option:has(:checked) {
     border-color: var(--color-primary);
     box-shadow: inset 0 0 0 1px var(--color-primary);
-    background: color-mix(in oklch, var(--color-primary-soft) 55%, var(--color-background));
+    background: color-mix(in oklab, var(--color-primary-soft) 55%, var(--color-background));
   }
 
   .option:has(:focus-visible) {
@@ -511,9 +566,18 @@ const defaultRange = `Rozpätie ${formatEuro(round50(defaultSum * (1 - accuracy 
       if (details) details.value = "";
       return;
     }
+    // Re-draw the summary's dimension line: the price was just measured.
+    const kota = document.querySelector<HTMLElement>(".summary .kota");
+    if (kota && total.textContent !== euro(round(sum))) {
+      kota.classList.remove("is-redraw");
+      void kota.offsetWidth;
+      kota.classList.add("is-redraw");
+    }
     const low = round(sum * (1 - accuracy));
     const high = round(sum * (1 + accuracy));
     total.textContent = euro(round(sum));
+    const bar = document.querySelector<HTMLElement>("[data-pricebar]");
+    if (bar) bar.textContent = euro(round(sum));
     range.textContent = `Rozpätie ${euro(low)} – ${euro(high)} (±${Math.round(accuracy * 100)} %)`;
     lines.replaceChildren(
       ...rows.map(([label, price]) => {

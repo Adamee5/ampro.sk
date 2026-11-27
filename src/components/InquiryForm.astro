@@ -43,7 +43,7 @@ const inquiryTo = page.form.recipients?.length ? page.form.recipients : site.com
 const topics = page.form.topics ?? [];
 ---
 
-<section id="dopyt" class="rounded-3xl border border-border bg-surface p-6 shadow-card sm:p-7 md:p-9" aria-labelledby="inquiry-title" data-reveal="fade">
+<section id="dopyt" class="rounded-3xl border border-border bg-surface p-6 shadow-card sm:p-7 md:p-9" aria-labelledby="inquiry-title">
   <h2 id="inquiry-title" class="text-2xl text-foreground md:text-3xl">{title}</h2>
   <p id="inquiry-help" class="mt-2 leading-7 text-muted">{help}</p>
 
@@ -189,8 +189,11 @@ const topics = page.form.topics ?? [];
     transition: border-color var(--duration-fast) var(--ease-standard);
   }
 
+  /* The native "no file chosen" text is hidden (it truncates); our own
+     line below says how many files are attached. */
   .inquiry__files input {
     border-style: dashed;
+    color: transparent;
     cursor: pointer;
   }
 
@@ -248,7 +251,7 @@ const topics = page.form.topics ?? [];
   .inquiry__field :is(input, textarea):user-invalid {
     border-color: var(--color-danger);
     box-shadow: 0 0 0 1px var(--color-danger);
-    background: color-mix(in oklch, var(--color-danger-soft) 55%, var(--color-background));
+    background: color-mix(in oklab, var(--color-danger-soft) 55%, var(--color-background));
   }
 
   .inquiry__field:has(:user-invalid) .inquiry__error {

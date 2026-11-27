@@ -1,0 +1,124 @@
+---
+/**
+ * A drawing's legend table (symbol – term – meaning), used for "Prečo AMpro"
+ * on the home page and the services on Pre firmy. Not links: no hover.
+ */
+import DrawIcon from "./DrawIcon.astro";
+import Icon from "@/components/ui/Icon.astro";
+
+export interface Props {
+  items: Array<{ icon: string; title: string; text: string; tone?: "design" | "energy"; href?: string; linkLabel?: string }>;
+  caption?: string;
+  /** Heading level of each term (h3 under a section h2, h2 directly under the page h1). */
+  headingLevel?: 2 | 3;
+}
+
+const { items, caption = "Legenda", headingLevel = 3 } = Astro.props;
+const Term = headingLevel === 2 ? "h2" : "h3";
+---
+
+<div class="legend-wrap">
+  <p class="legend__caption" aria-hidden="true">{caption}</p>
+  <ul class="legend list-none">
+    {
+      items.map((item) => (
+        <li class="legend__row">
+          <span class:list={["legend__symbol", item.tone === "energy" ? "text-energy" : "text-primary"]}>
+            <DrawIcon name={item.icon} class="h-7 w-7" />
+          </span>
+          <Term class="legend__title">{item.title}</Term>
+          <div class="legend__text">
+            <p>{item.text}</p>
+            {item.href && (
+              <a href={item.href} target="_blank" rel="noopener" class="mt-1 inline-flex min-h-11 items-center gap-1 text-sm font-medium text-energy hover:underline">
+                {item.linkLabel}<span class="sr-only"> (otvorí sa v novom okne)</span>
+                <Icon name="arrow-top-right-on-square" variant="mini" class="h-4 w-4" />
+              </a>
+            )}
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .legend__caption {
+    margin: 2.5rem 0 0;
+    padding: 0.5rem 0.875rem;
+    border: 1.5px solid var(--color-line);
+    border-bottom: 0;
+    width: max-content;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .legend {
+    margin: 0;
+    padding: 0;
+    border: 1.5px solid var(--color-line);
+    background: var(--color-surface-elevated);
+  }
+
+  .legend__row {
+    display: grid;
+    grid-template-columns: 3.75rem 1fr;
+    border-bottom: 1px solid var(--color-border-strong);
+  }
+
+  .legend__row:last-child {
+    border-bottom: 0;
+  }
+
+  .legend__symbol {
+    display: grid;
+    place-items: center;
+    grid-row: span 2;
+    border-right: 1px solid var(--color-border-strong);
+  }
+
+  .legend__title {
+    margin: 0;
+    padding: 1rem 1.25rem 0;
+    font-size: 1.0625rem;
+    line-height: 1.35;
+    color: var(--color-foreground);
+  }
+
+  .legend__text {
+    padding: 0.25rem 1.25rem 1rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--color-muted);
+  }
+
+  .legend__text p {
+    margin: 0;
+  }
+
+  @media (min-width: 48rem) {
+    .legend__row {
+      grid-template-columns: 4.75rem 17rem 1fr;
+      align-items: center;
+    }
+
+    .legend__symbol {
+      grid-row: auto;
+      align-self: stretch;
+    }
+
+    .legend__title {
+      display: flex;
+      align-items: center;
+      align-self: stretch;
+      padding: 1.25rem 1.5rem;
+      border-right: 1px solid var(--color-border-strong);
+    }
+
+    .legend__text {
+      padding: 1rem 1.5rem;
+    }
+  }
+</style>
