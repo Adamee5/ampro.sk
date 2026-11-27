@@ -1,0 +1,98 @@
+---
+/**
+ * The business-card motif: a dashed blue axis (projekcia) and a dashed green
+ * axis (energetika) crossing in one square – the point where AMpro works.
+ * Pure SVG + CSS; the dashes "flow" only with motion allowed.
+ */
+export interface Props {
+  caption: string;
+}
+
+const { caption } = Astro.props;
+---
+
+<figure class="axes" data-reveal>
+  <svg viewBox="0 0 200 200" class="axes__svg" aria-hidden="true">
+    <line class="axes__line axes__line--design" x1="100" y1="6" x2="100" y2="194" />
+    <line class="axes__line axes__line--energy" x1="6" y1="100" x2="194" y2="100" />
+    <circle class="axes__badge axes__badge--design" cx="100" cy="22" r="13" />
+    <path class="axes__icon axes__icon--design" d="M93 23.5 100 17l7 6.5M95 22v7h10v-7" />
+    <circle class="axes__badge axes__badge--energy" cx="178" cy="100" r="13" />
+    <path class="axes__icon axes__icon--energy" d="m179.5 92-6 9.5h5l-1.5 6.5 6-9.5h-5z" />
+    <rect class="axes__node" x="92" y="92" width="16" height="16" />
+  </svg>
+  <figcaption class="axes__caption">{caption}</figcaption>
+</figure>
+
+<style>
+  .axes {
+    display: grid;
+    justify-items: center;
+    gap: calc(var(--spacing) * 4);
+    margin: 0;
+  }
+
+  .axes__svg {
+    width: min(15rem, 70vw);
+    height: auto;
+    overflow: visible;
+  }
+
+  .axes__line {
+    stroke-width: 2;
+    stroke-dasharray: 10 6 3 6;
+  }
+
+  .axes__line--design,
+  .axes__badge--design,
+  .axes__icon--design {
+    stroke: var(--color-primary);
+  }
+
+  .axes__line--energy,
+  .axes__badge--energy,
+  .axes__icon--energy {
+    stroke: var(--color-energy);
+  }
+
+  .axes__badge {
+    fill: var(--color-surface);
+    stroke-width: 2;
+  }
+
+  .axes__icon {
+    fill: none;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .axes__node {
+    fill: var(--color-foreground);
+  }
+
+  .axes__caption {
+    max-width: 16rem;
+    text-align: center;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--color-foreground);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .axes__line--design {
+      animation: axes-flow 1.85s linear infinite;
+    }
+
+    .axes__line--energy {
+      animation: axes-flow 1.45s linear infinite reverse;
+    }
+
+    @keyframes axes-flow {
+      to {
+        stroke-dashoffset: -25;
+      }
+    }
+  }
+</style>

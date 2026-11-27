@@ -1,0 +1,27 @@
+{
+  "seo": {
+    "title": "Kontakt",
+    "description": "Kontaktujte AMpro SK – projekcia rodinných domov a energetika budov. Telefón, e-mail a dopytový formulár s možnosťou priložiť výkresy. Odpovieme do 24 hodín.",
+    "keywords": []
+  },
+  "title": "Povedzte nám, čo staviate",
+  "text": "Napíšte pár viet, priložte čo máte (geometrický plán, skicu, starý projekt) a ozveme sa do 24 hodín v pracovné dni.",
+  "form": {
+    "recipients": [
+      "adame.mah@gmail.com"
+    ],
+    "topics": [
+      "Projekt rodinného domu",
+      "Rekonštrukcia / obnova",
+      "Energetický certifikát / PEH",
+      "Výkresy pre výrobu / BIM (firmy)",
+      "Niečo iné"
+    ],
+    "successTitle": "Ďakujeme, dopyt sme prijali",
+    "successText": "Na váš e-mail sme poslali potvrdenie. Ozveme sa do 24 hodín v pracovné dni.",
+    "confirmationSubject": "Ďakujeme za váš dopyt – AMpro.SK",
+    "confirmationText": "Dobrý deň,\n\nďakujeme za váš dopyt. Ozveme sa vám do 24 hodín v pracovné dni.\n\nNižšie posielame kópiu toho, čo ste nám napísali.",
+    "attachmentsConfirmationSubject": "Prílohy sme prijali – čakajte na nacenenie",
+    "attachmentsConfirmationText": "Dobrý deň,\n\nďakujeme, vaše podklady sme prijali. Pozrieme sa na ne a presné nacenenie vám pošleme do 24 hodín v pracovné dni.\n\nPrijaté prílohy:"
+  }
+}

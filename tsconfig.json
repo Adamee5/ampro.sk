@@ -1,0 +1,15 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    // Only type syntax a runtime can strip (no enums/namespaces) – scripts/*.ts run directly with Bun.
+    "erasableSyntaxOnly": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@components/*": ["./src/components/*"],
+      "@layouts/*": ["./src/layouts/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@locales/*": ["./src/locales/*"]
+    }
+  },
+  "exclude": ["Resources", "public", "dist", "node_modules"]
+}

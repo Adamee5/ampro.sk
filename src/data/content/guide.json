@@ -1,0 +1,60 @@
+{
+  "seo": {
+    "title": "Sprievodca – neviem, kde začať",
+    "description": "Päť krátkych otázok o vašom pozemku a plánoch. Odporučíme vám postup, rozsah projektu a predvyplníme konfigurátor ceny.",
+    "keywords": ["ako začať stavať dom", "postup pri stavbe rodinného domu"]
+  },
+  "title": "Neviete, kde začať? To je v poriadku.",
+  "text": "Odpovedzte na päť krátkych otázok. Na konci vám odporučíme postup a pripravíme orientačnú cenu.",
+  "questions": [
+    {
+      "id": "plan",
+      "question": "Čo plánujete?",
+      "options": [
+        { "id": "novy", "label": "Postaviť nový rodinný dom" },
+        { "id": "rekon", "label": "Prerobiť alebo rozšíriť existujúci dom" },
+        { "id": "cert", "label": "Potrebujem len energetický certifikát" },
+        { "id": "nevim", "label": "Ešte presne neviem" }
+      ]
+    },
+    {
+      "id": "pozemok",
+      "question": "Máte pozemok?",
+      "options": [
+        { "id": "ano", "label": "Áno, mám ho" },
+        { "id": "kupujem", "label": "Práve ho kupujem / vyberám" },
+        { "id": "nie", "label": "Zatiaľ nie" }
+      ]
+    },
+    {
+      "id": "podklady",
+      "question": "Čo už máte v ruke?",
+      "options": [
+        { "id": "nic", "label": "Nič, len predstavu" },
+        { "id": "skica", "label": "Skicu alebo inšpirácie" },
+        { "id": "katalog", "label": "Katalógový projekt, ktorý treba upraviť" },
+        { "id": "projekt", "label": "Hotový projekt (chýbajú časti alebo energetika)" }
+      ]
+    },
+    {
+      "id": "velkost",
+      "question": "Aký veľký dom si predstavujete?",
+      "options": [
+        { "id": "small", "label": "Bungalov do 150 m²" },
+        { "id": "large", "label": "Väčší dom nad 150 m²" },
+        { "id": "poschodie", "label": "Poschodový dom" },
+        { "id": "nevim", "label": "Neviem odhadnúť" }
+      ]
+    },
+    {
+      "id": "priorita",
+      "question": "Čo je pre vás najdôležitejšie?",
+      "options": [
+        { "id": "energia", "label": "Nízke náklady na energie" },
+        { "id": "rychlost", "label": "Rýchlo získať povolenie" },
+        { "id": "dizajn", "label": "Dispozícia a vzhľad" },
+        { "id": "rozpocet", "label": "Udržať rozpočet" }
+      ]
+    }
+  ]
+}

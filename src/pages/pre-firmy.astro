@@ -1,0 +1,60 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SectionIntro from "@/components/SectionIntro.astro";
+import InquiryForm from "@/components/InquiryForm.astro";
+import Icon from "@/components/ui/Icon.astro";
+import { site } from "@/data/site";
+
+const page = site.b2b;
+---
+
+<BaseLayout
+  title={page.seo.title}
+  description={page.seo.description}
+  keywords={page.seo.keywords}
+  pathname="/pre-firmy/"
+  breadcrumbs={[
+    { name: "Úvod", href: "/" },
+    { name: "Pre firmy", href: "/pre-firmy/" },
+  ]}
+>
+  <SiteHeader pathname={Astro.url.pathname} />
+  <main id="main" class="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+    <SectionIntro level={1} eyebrow={page.eyebrow} title={page.title} text={page.text} />
+
+    <!-- Not links: no hover effect, so nothing suggests a click. -->
+    <ul class="mt-10 grid list-none gap-6 sm:mt-12 sm:grid-cols-2">
+      {
+        page.services.map((service, index) => (
+          <li class="flex h-full flex-col rounded-2xl border border-border bg-surface p-7" data-reveal style={`--reveal-i: ${index}`}>
+            <span class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <Icon name={service.icon} class="h-6 w-6" />
+            </span>
+            <h2 class="mt-5 text-xl text-foreground">{service.title}</h2>
+            <p class="mt-3 leading-7 text-muted">{service.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="mt-8 flex max-w-3xl gap-3 rounded-xl border border-border bg-background p-5 leading-7 text-muted">
+      <Icon name="document-text" class="mt-1 h-5 w-5 shrink-0 text-primary" />
+      {page.pricingText}
+    </p>
+
+    <div class="mx-auto mt-14 max-w-3xl sm:mt-20">
+      <InquiryForm
+        title={page.formTitle}
+        help="Popíšte zákazku, termín a formát výstupu. Priložte výkresy alebo model (DWG, DXF, IFC, PDF, ZIP – spolu do 25 MB)."
+        topic="Výkresy pre výrobu / BIM (firmy)"
+        fixedTopic
+        back="/pre-firmy/"
+        submitLabel="Odoslať dopyt"
+        messagePlaceholder="Firma, typ zákazky (kladačské výkresy, CNC, nárezové plány, model), rozsah, termín, požadovaný formát…"
+      />
+    </div>
+  </main>
+  <SiteFooter />
+</BaseLayout>

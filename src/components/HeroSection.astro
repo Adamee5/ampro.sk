@@ -1,0 +1,190 @@
+---
+/**
+ * Hero: full-bleed photo (LCP, preloaded via heroPreload() in the page) under
+ * an ink overlay, the logo, headline and two CTAs. Content enters with a
+ * short staggered rise (motion-safe only) and a scroll cue leads into the
+ * first section (`#obsah`).
+ */
+import Icon from "@/components/ui/Icon.astro";
+import { site } from "@/data/site";
+import { hero } from "@/lib/images";
+import { withBase } from "@/lib/navigation";
+import Button from "./ui/Button.astro";
+import ResponsiveImage from "./ui/ResponsiveImage.astro";
+
+const hero_ = site.home.hero;
+---
+
+<section class="relative isolate overflow-hidden bg-ink-deep" aria-labelledby="hero-title">
+  <div class="absolute inset-0" aria-hidden="true">
+    <ResponsiveImage
+      src={hero_.image}
+      alt=""
+      width={hero.width}
+      height={hero.height}
+      sizes={hero.sizes}
+      priority
+      class="h-full w-full scale-105 object-cover motion-safe:animate-hero-zoom"
+    />
+    <div class="hero__overlay absolute inset-0"></div>
+  </div>
+
+  <div class="relative mx-auto flex min-h-[88svh] max-w-4xl flex-col items-center justify-center px-4 pb-24 pt-16 text-center sm:min-h-[92svh] sm:px-6 lg:px-8">
+    <div class="flex flex-col items-center gap-6 text-white sm:gap-7">
+      <p class="hero__rise hero__brand" style="--i: 0">
+        <span class="hero__wordmark"><strong>AM</strong>pro.SK</span>
+        <span class="hero__tagline"><span class="text-accent">Projekcia</span><span class="text-energy-accent">Energetika budov</span></span>
+      </p>
+
+      <p
+        class="hero__rise inline-flex items-center gap-3 whitespace-nowrap text-[0.7rem] font-medium uppercase tracking-eyebrow text-white/80 sm:text-xs"
+        style="--i: 1"
+      >
+        <span class="hidden h-px w-10 bg-accent/80 sm:block" aria-hidden="true"></span>
+        {hero_.eyebrow}
+        <span class="hidden h-px w-10 bg-accent/80 sm:block" aria-hidden="true"></span>
+      </p>
+
+      <h1
+        id="hero-title"
+        class="hero__rise mx-auto max-w-3xl text-balance text-3xl leading-[1.12] sm:text-4xl md:text-5xl lg:text-6xl"
+        style="--i: 2"
+      >
+        {hero_.title}
+      </h1>
+
+      {
+        hero_.text && (
+          <p
+            class="hero__rise mx-auto max-w-2xl text-balance text-base leading-7 text-white/85 sm:text-lg sm:leading-8"
+            style="--i: 3"
+          >
+            {hero_.text}
+          </p>
+        )
+      }
+
+      <div
+        class="hero__rise flex w-full flex-col items-stretch justify-center gap-3 pt-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 lg:pt-8"
+        style="--i: 4"
+      >
+        <Button
+          as="a"
+          href={withBase(hero_.primaryCta.href)}
+          variant="hero-primary"
+          size="lg"
+          fullWidth
+          rel={undefined}
+          class="justify-center sm:min-w-[220px]"
+        >
+          {hero_.primaryCta.label}
+        </Button>
+        <Button
+          as="a"
+          href={withBase(hero_.secondaryCta.href)}
+          variant="hero-outline"
+          size="lg"
+          fullWidth
+          rel={undefined}
+          class="justify-center sm:min-w-[220px]"
+        >
+          {hero_.secondaryCta.label}
+        </Button>
+      </div>
+    </div>
+
+    <a
+      href="#obsah"
+      class="hero__cue absolute bottom-6 left-1/2 inline-flex min-h-11 min-w-11 -translate-x-1/2 flex-col items-center justify-center gap-1 rounded-full text-[0.7rem] uppercase tracking-eyebrow text-white/70 no-underline transition-colors duration-fast hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+    >
+      <span>Viac<span class="sr-only"> – prejsť na obsah</span></span>
+      <span aria-hidden="true"><Icon name="chevron-down" class="h-5 w-5" /></span>
+    </a>
+  </div>
+</section>
+
+<style>
+  /* Business-card wordmark: bold AM + light pro.SK, tagline in the two
+     brand colours (blue = projekcia, green = energetika). */
+  .hero__brand {
+    display: grid;
+    justify-items: center;
+    gap: 0.35rem;
+    margin: 0;
+    text-shadow: 0 6px 24px rgb(0 0 0 / 0.35);
+  }
+
+  .hero__wordmark {
+    font-size: clamp(2.5rem, 7vw, 3.75rem);
+    font-weight: 300;
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+
+  .hero__wordmark strong {
+    font-weight: 700;
+  }
+
+  .hero__tagline {
+    display: flex;
+    gap: 1.25rem;
+    font-size: clamp(0.6875rem, 1.6vw, 0.8125rem);
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  /* Layered radial overlay with color-mix() – Tailwind can't express it. */
+  .hero__overlay {
+    background:
+      /* brand glow – fixed value: the hero stays dark in both themes */
+      radial-gradient(
+        ellipse 75% 60% at 50% 0%,
+        oklch(0.5 0.1 250 / 0.3),
+        transparent 72%
+      ),
+      radial-gradient(
+        ellipse 50% 45% at 100% 100%,
+        oklch(0.55 0.09 165 / 0.18),
+        transparent 72%
+      ),
+      radial-gradient(
+        ellipse at center,
+        color-mix(in oklch, var(--color-ink-deep) 58%, transparent) 0%,
+        color-mix(in oklch, var(--color-ink-deep) 76%, transparent) 55%,
+        color-mix(in oklch, var(--color-ink-deep) 90%, transparent) 100%
+      );
+  }
+
+  /* Staggered entrance; final state is the default, so content is always
+     readable without motion or JS. */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__rise {
+      animation: hero-rise 900ms var(--ease-out-soft) both;
+      animation-delay: calc(var(--i, 0) * 110ms + 120ms);
+    }
+
+    .hero__cue {
+      animation: hero-cue 2.4s var(--ease-standard) 1.8s 3;
+    }
+  }
+
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+  }
+
+  /* Vertical bob only: the horizontal centring comes from Tailwind's
+     -translate-x-1/2 (the `translate` property), which `transform` adds to. */
+  @keyframes hero-cue {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(0.35rem);
+    }
+  }
+</style>

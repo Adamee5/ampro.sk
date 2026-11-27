@@ -1,0 +1,78 @@
+{
+  "id": "./",
+  "name": "AMpro.SK – projekcia a energetika budov",
+  "short_name": "AMpro.SK",
+  "description": "Projekt rodinného domu, ktorý spĺňa A0 už na papieri. Projektant a energetik OSO č. 418 v jednej osobe.",
+  "lang": "sk",
+  "dir": "ltr",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "any",
+  "background_color": "#fafafa",
+  "theme_color": "#1e1e1e",
+  "categories": [
+    "business"
+  ],
+  "icons": [
+    {
+      "src": "images/favicons/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "images/favicons/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "images/favicons/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "images/favicons/maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "images/favicons/maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Cena projektu",
+      "short_name": "Cena projektu",
+      "url": "konfigurator/?source=pwa",
+      "icons": [
+        {
+          "src": "images/favicons/web-app-manifest-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Kontakt",
+      "short_name": "Kontakt",
+      "url": "kontakt/?source=pwa",
+      "icons": [
+        {
+          "src": "images/favicons/web-app-manifest-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

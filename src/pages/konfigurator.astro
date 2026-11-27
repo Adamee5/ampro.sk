@@ -1,0 +1,502 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SectionIntro from "@/components/SectionIntro.astro";
+import InquiryForm from "@/components/InquiryForm.astro";
+import Icon from "@/components/ui/Icon.astro";
+import { site, formatEuro } from "@/data/site";
+
+const { project, accuracy, note } = site.pricing;
+const defaultStages = ["zamer", "projekt"];
+const defaultItems = ["elektro", "zti", "uk", "peh"];
+---
+
+<BaseLayout
+  title={project.seo.title}
+  description={project.seo.description}
+  keywords={project.seo.keywords}
+  pathname="/konfigurator/"
+  breadcrumbs={[
+    { name: "Úvod", href: "/" },
+    { name: "Cena projektu", href: "/konfigurator/" },
+  ]}
+>
+  <SiteHeader pathname={Astro.url.pathname} />
+  <main id="main" class="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+    <SectionIntro level={1} eyebrow="Konfigurátor ceny projektu" title={project.title} text={project.text} />
+
+    <div class="mt-10 grid gap-8 lg:mt-12 lg:grid-cols-[1fr_22rem] lg:items-start xl:grid-cols-[1fr_24rem]">
+      <form class="config grid gap-6" data-config data-accuracy={accuracy} aria-label="Výber rozsahu projektu">
+        <fieldset class="config__group">
+          <legend class="config__legend"><span class="config__step">1</span> Čo staviate?</legend>
+          <div class="config__options sm:grid-cols-2">
+            {project.buildingTypes.map((type, index) => (
+              <label class="option">
+                <input type="radio" name="typ" value={type.id} checked={index === 0} />
+                <span class="option__body">
+                  <span class="option__title">{type.label}</span>
+                  <span class="option__text">{type.text}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <div class="config__renovation" data-renovation>
+          <Icon name="wrench-screwdriver" class="h-6 w-6 shrink-0 text-primary" />
+          <p>{project.renovationText}</p>
+        </div>
+
+        <fieldset class="config__group" data-new-build>
+          <legend class="config__legend"><span class="config__step">2</span> Veľkosť domu</legend>
+          <div class="config__options sm:grid-cols-2">
+            {project.sizes.map((size, index) => (
+              <label class="option">
+                <input type="radio" name="velkost" value={size.id} checked={index === 0} />
+                <span class="option__body">
+                  <span class="option__title">{size.label}</span>
+                  <span class="option__text">{size.text}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+          <p class="config__sub">Príplatky</p>
+          <div class="config__options sm:grid-cols-3">
+            {project.surcharges.map((item) => (
+              <label class="option option--compact">
+                <input
+                  type="checkbox"
+                  name="priplatky"
+                  value={item.id}
+                  data-label={item.label}
+                  data-kind={item.type}
+                  data-value={item.value}
+                />
+                <span class="option__body">
+                  <span class="option__title">{item.label}</span>
+                  <span class="option__text">{item.text}</span>
+                  <span class="option__price">{item.type === "percent" ? `+${item.value} %` : `+${formatEuro(item.value)}`}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <fieldset class="config__group" data-new-build>
+          <legend class="config__legend"><span class="config__step">3</span> Stupne dokumentácie</legend>
+          <p class="config__hint">Architektúra a statika. Vyberte jeden alebo viac – nevadí, ak si nie ste istí, poradíme.</p>
+          <div class="config__options sm:grid-cols-2">
+            {project.stages.map((stage) => (
+              <label class="option">
+                <input
+                  type="checkbox"
+                  name="stupne"
+                  value={stage.id}
+                  checked={defaultStages.includes(stage.id)}
+                  data-label={stage.label}
+                  data-small={stage.priceSmall}
+                  data-large={stage.priceLarge}
+                />
+                <span class="option__body">
+                  <span class="option__title">{stage.label}</span>
+                  <span class="option__text">{stage.text}</span>
+                  <span class="option__price" data-stage-price data-small={stage.priceSmall} data-large={stage.priceLarge}>
+                    {formatEuro(stage.priceSmall)}
+                  </span>
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        {project.groups.map((group, groupIndex) => (
+          <fieldset class="config__group" data-new-build>
+            <legend class="config__legend"><span class="config__step">{groupIndex + 4}</span> {group.title}</legend>
+            <p class="config__hint">{group.text}</p>
+            <div class="config__options sm:grid-cols-2">
+              {group.items.map((item) => (
+                <label class="option option--compact">
+                  <input
+                    type="checkbox"
+                    name="doplnky"
+                    value={item.id}
+                    checked={defaultItems.includes(item.id)}
+                    data-label={item.label}
+                    data-group={group.title}
+                    data-price={item.price}
+                  />
+                  <span class="option__body">
+                    <span class="option__title">{item.label}</span>
+                    <span class="option__price">+{formatEuro(item.price)}</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+      </form>
+
+      <aside class="summary lg:sticky lg:top-[calc(var(--header-height)+1.5rem)]" aria-labelledby="summary-title">
+        <p id="summary-title" class="text-sm font-medium uppercase tracking-eyebrow text-primary">Orientačná cena</p>
+        <p class="summary__price" aria-live="polite" data-total>—</p>
+        <p class="summary__range" data-range></p>
+        <noscript>
+          <p class="mt-3 text-sm leading-6 text-muted">Na výpočet ceny potrebujete zapnutý JavaScript. Ceny jednotlivých položiek vidíte pri každej voľbe.</p>
+        </noscript>
+        <ul class="summary__list" data-lines></ul>
+        <p class="mt-4 text-xs leading-5 text-muted">{note}</p>
+        <a href="#dopyt" class="summary__cta" data-summary-cta>
+          Poslať dopyt s týmto výberom
+          <Icon name="arrow-down" variant="mini" class="h-5 w-5" />
+        </a>
+        <p class="mt-3 text-center text-xs text-muted">{site.credentials.responseTime}</p>
+      </aside>
+    </div>
+
+    <div class="mx-auto mt-14 max-w-3xl sm:mt-20">
+      <InquiryForm
+        title="Pošlite nám výber a pozemok"
+        help="Váš výber z konfigurátora pripojíme automaticky. Doplňte obec, termín a ak máte, priložte geometrický plán, regulatívy obce alebo skicu."
+        topic="Projekt rodinného domu"
+        back="/konfigurator/"
+        submitLabel="Odoslať dopyt"
+        messagePlaceholder="Obec / katastrálne územie, kedy chcete stavať, čo už máte (geometrický plán, regulatívy, inšpirácie)…"
+      />
+    </div>
+  </main>
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .config__group {
+    margin: 0;
+    padding: calc(var(--spacing) * 6);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    min-inline-size: 0;
+  }
+
+  .config__legend {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing) * 3);
+    float: left;
+    width: 100%;
+    margin-bottom: calc(var(--spacing) * 4);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+
+  .config__legend + * {
+    clear: both;
+  }
+
+  .config__step {
+    display: inline-grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 1.5px solid var(--color-primary);
+    border-radius: 50%;
+    font-size: 0.8125rem;
+    color: var(--color-primary);
+  }
+
+  .config__hint {
+    margin: 0 0 calc(var(--spacing) * 4);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-muted);
+  }
+
+  .config__sub {
+    margin: calc(var(--spacing) * 6) 0 calc(var(--spacing) * 3);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .config__options {
+    display: grid;
+    gap: calc(var(--spacing) * 3);
+  }
+
+  .option {
+    position: relative;
+    display: flex;
+    gap: calc(var(--spacing) * 3);
+    min-height: 2.75rem;
+    padding: calc(var(--spacing) * 4);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: var(--color-background);
+    cursor: pointer;
+    transition:
+      border-color var(--duration-fast) var(--ease-standard),
+      box-shadow var(--duration-fast) var(--ease-standard);
+  }
+
+  .option--compact {
+    padding-block: calc(var(--spacing) * 3);
+  }
+
+  .option:hover {
+    border-color: var(--color-primary);
+  }
+
+  .option:has(:checked) {
+    border-color: var(--color-primary);
+    box-shadow: inset 0 0 0 1px var(--color-primary);
+    background: color-mix(in oklch, var(--color-primary-soft) 55%, var(--color-background));
+  }
+
+  .option:has(:focus-visible) {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .option input {
+    flex: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-top: 0.2rem;
+    accent-color: var(--color-primary);
+  }
+
+  .option input:focus-visible {
+    outline: none;
+  }
+
+  .option__body {
+    display: grid;
+    flex: 1;
+    grid-template-columns: 1fr auto;
+    column-gap: calc(var(--spacing) * 3);
+    align-items: baseline;
+  }
+
+  .option__title {
+    font-weight: 500;
+    color: var(--color-foreground);
+    line-height: 1.4;
+  }
+
+  .option__text {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin-top: calc(var(--spacing) * 1);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
+
+  .option__price {
+    grid-column: 2;
+    grid-row: 1;
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--color-muted);
+  }
+
+  .config__renovation {
+    display: none;
+    gap: calc(var(--spacing) * 4);
+    padding: calc(var(--spacing) * 6);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-xl);
+    background: var(--color-primary-soft);
+    line-height: 1.7;
+    color: var(--color-foreground);
+  }
+
+  /* Renovation: no price grid, straight to the inquiry. CSS-only switch. */
+  .config:has(input[name="typ"][value="rekonstrukcia"]:checked) [data-new-build] {
+    display: none;
+  }
+
+  .config:has(input[name="typ"][value="rekonstrukcia"]:checked) [data-renovation] {
+    display: flex;
+  }
+
+  .summary {
+    padding: calc(var(--spacing) * 7);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-2xl);
+    background: var(--color-surface-elevated);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .summary__price {
+    margin-top: calc(var(--spacing) * 2);
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: var(--color-foreground);
+  }
+
+  .summary__range {
+    margin-top: calc(var(--spacing) * 1);
+    font-size: 0.875rem;
+    color: var(--color-muted);
+  }
+
+  .summary__list {
+    display: grid;
+    gap: calc(var(--spacing) * 2);
+    margin: calc(var(--spacing) * 5) 0 0;
+    padding: calc(var(--spacing) * 5) 0 0;
+    border-top: 1px solid var(--color-border);
+    list-style: none;
+    font-size: 0.875rem;
+  }
+
+  .summary__list :global(li) {
+    display: flex;
+    justify-content: space-between;
+    gap: calc(var(--spacing) * 3);
+    color: var(--color-muted);
+  }
+
+  .summary__list :global(li span:last-child) {
+    flex: none;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .summary__cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--spacing) * 2);
+    min-height: 3rem;
+    margin-top: calc(var(--spacing) * 6);
+    padding: calc(var(--spacing) * 3) calc(var(--spacing) * 5);
+    border-radius: var(--radius-md);
+    background: var(--color-action);
+    color: var(--color-on-action);
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: var(--shadow-card);
+  }
+
+  .summary__cta:hover {
+    background: var(--color-action-hover);
+    box-shadow: var(--shadow-lifted);
+  }
+</style>
+
+<script>
+  // Price estimate: stages × size (+ % surcharges) + fixed surcharges + items.
+  // Everything comes from data-* attributes rendered from pricing.json (CMS).
+  // The summary is copied into the inquiry form's hidden `details` field.
+  const form = document.querySelector<HTMLFormElement>("[data-config]");
+  const total = document.querySelector<HTMLElement>("[data-total]");
+  const range = document.querySelector<HTMLElement>("[data-range]");
+  const lines = document.querySelector<HTMLUListElement>("[data-lines]");
+  const details = document.querySelector<HTMLInputElement>("[data-inquiry-details]");
+  const accuracy = Number(form?.dataset.accuracy ?? 15) / 100;
+
+  const euro = (value: number) => `${Math.round(value).toLocaleString("sk-SK").replace(/ /g, " ")} €`;
+  const round = (value: number, step = 50) => Math.round(value / step) * step;
+  const checked = (name: string) => [...(form?.querySelectorAll<HTMLInputElement>(`input[name="${name}"]:checked`) ?? [])];
+  const value = (name: string) => form?.querySelector<HTMLInputElement>(`input[name="${name}"]:checked`)?.value ?? "";
+  const labelOf = (input: HTMLInputElement) => input.closest("label")?.querySelector(".option__title")?.textContent?.trim() ?? input.value;
+
+  // Prefill from the guide (/sprievodca/): ?typ=rd&velkost=small&stupne=a,b&doplnky=c,d&priplatky=e
+  const prefill = () => {
+    const params = new URLSearchParams(location.search);
+    if (!form || ![...params.keys()].some((key) => ["typ", "velkost", "stupne", "doplnky", "priplatky"].includes(key))) return;
+    for (const name of ["typ", "velkost"]) {
+      const wanted = params.get(name);
+      const input = wanted && form.querySelector<HTMLInputElement>(`input[name="${name}"][value="${CSS.escape(wanted)}"]`);
+      if (input) input.checked = true;
+    }
+    for (const name of ["stupne", "doplnky", "priplatky"]) {
+      if (!params.has(name)) continue;
+      const wanted = new Set((params.get(name) ?? "").split(",").filter(Boolean));
+      form.querySelectorAll<HTMLInputElement>(`input[name="${name}"]`).forEach((input) => (input.checked = wanted.has(input.value)));
+    }
+  };
+
+  const update = () => {
+    if (!form || !total || !range || !lines) return;
+    const type = value("typ");
+    const typeLabel = labelOf(form.querySelector<HTMLInputElement>('input[name="typ"]:checked')!);
+
+    if (type === "rekonstrukcia") {
+      total.textContent = "Na obhliadku";
+      range.textContent = "Nacenenie do 24 hodín po zaslaní podkladov.";
+      lines.replaceChildren();
+      if (details) details.value = `Typ: ${typeLabel}\nCena: nacenenie po obhliadke / podkladoch`;
+      return;
+    }
+
+    const size = value("velkost") === "large" ? "large" : "small";
+    const sizeLabel = labelOf(form.querySelector<HTMLInputElement>('input[name="velkost"]:checked')!);
+    form.querySelectorAll<HTMLElement>("[data-stage-price]").forEach((el) => {
+      el.textContent = euro(Number(el.dataset[size]));
+    });
+
+    const rows: Array<[string, number]> = [];
+    let stages = 0;
+    for (const input of checked("stupne")) {
+      const price = Number(input.dataset[size]);
+      stages += price;
+      rows.push([input.dataset.label ?? input.value, price]);
+    }
+    let surcharge = 0;
+    for (const input of checked("priplatky")) {
+      const amount = input.dataset.kind === "percent" ? (stages * Number(input.dataset.value)) / 100 : Number(input.dataset.value);
+      surcharge += amount;
+      rows.push([input.dataset.label ?? input.value, amount]);
+    }
+    let extras = 0;
+    for (const input of checked("doplnky")) {
+      const price = Number(input.dataset.price);
+      extras += price;
+      rows.push([input.dataset.label ?? input.value, price]);
+    }
+
+    const sum = stages + surcharge + extras;
+    if (!sum) {
+      total.textContent = "—";
+      range.textContent = "Vyberte aspoň jednu položku.";
+      lines.replaceChildren();
+      if (details) details.value = "";
+      return;
+    }
+    const low = round(sum * (1 - accuracy));
+    const high = round(sum * (1 + accuracy));
+    total.textContent = euro(round(sum));
+    range.textContent = `Rozpätie ${euro(low)} – ${euro(high)} (±${Math.round(accuracy * 100)} %)`;
+    lines.replaceChildren(
+      ...rows.map(([label, price]) => {
+        const li = document.createElement("li");
+        const name = document.createElement("span");
+        const amount = document.createElement("span");
+        name.textContent = label;
+        amount.textContent = euro(price);
+        li.append(name, amount);
+        return li;
+      }),
+    );
+    if (details) {
+      details.value = [
+        `Typ: ${typeLabel}, ${sizeLabel}`,
+        ...rows.map(([label, price]) => `- ${label}: ${euro(price)}`),
+        `Orientačná cena: ${euro(round(sum))} (${euro(low)} – ${euro(high)})`,
+      ].join("\n");
+    }
+  };
+
+  prefill();
+  update();
+  form?.addEventListener("change", update);
+</script>

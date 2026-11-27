@@ -1,0 +1,394 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SectionIntro from "@/components/SectionIntro.astro";
+import InquiryForm from "@/components/InquiryForm.astro";
+import Icon from "@/components/ui/Icon.astro";
+import { site, formatEuro } from "@/data/site";
+
+const { ecb } = site.pricing;
+const service = {
+  "@type": "Service",
+  "@id": `${site.siteUrl}/energeticky-certifikat/#service`,
+  name: "Energetický certifikát budovy",
+  serviceType: "Energetická certifikácia budov",
+  provider: { "@id": `${site.siteUrl}/#business` },
+  areaServed: site.company.areaServed,
+  offers: ecb.buildings
+    .filter((building) => building.price > 0)
+    .map((building) => ({
+      "@type": "Offer",
+      name: building.label,
+      priceCurrency: "EUR",
+      price: building.price,
+    })),
+};
+---
+
+<BaseLayout
+  title={ecb.seo.title}
+  description={ecb.seo.description}
+  keywords={ecb.seo.keywords}
+  pathname="/energeticky-certifikat/"
+  schema={[service]}
+  breadcrumbs={[
+    { name: "Úvod", href: "/" },
+    { name: "Energetický certifikát", href: "/energeticky-certifikat/" },
+  ]}
+>
+  <SiteHeader pathname={Astro.url.pathname} />
+  <main id="main" class="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+    <div class="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
+      <SectionIntro level={1} eyebrow="Energetická certifikácia" title={ecb.title} text={ecb.text} />
+      <a href={site.credentials.registerUrl} target="_blank" rel="noopener" class="oso">
+        <Icon name="shield-check" class="h-6 w-6" />
+        <span>
+          <strong>{site.credentials.oso}</strong>
+          <span class="block text-sm">Overiť v registri SKSI<span class="sr-only"> (otvorí sa v novom okne)</span></span>
+        </span>
+      </a>
+    </div>
+
+    <div class="mt-10 grid gap-8 lg:mt-12 lg:grid-cols-[1fr_22rem] lg:items-start xl:grid-cols-[1fr_24rem]">
+      <form class="calc grid gap-6" data-calc aria-label="Výpočet ceny certifikátu">
+        <fieldset class="calc__group">
+          <legend class="calc__legend">Na čo certifikát potrebujete?</legend>
+          <div class="calc__options sm:grid-cols-3">
+            {ecb.purposes.map((purpose, index) => (
+              <label class="choice">
+                <input type="radio" name="ucel" value={purpose.id} checked={index === 0} data-label={purpose.label} data-extra={purpose.extra} />
+                <span>
+                  <span class="choice__title">{purpose.label}</span>
+                  {purpose.text && <span class="choice__text">{purpose.text}</span>}
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <fieldset class="calc__group">
+          <legend class="calc__legend">Typ budovy a plocha</legend>
+          <div class="calc__options sm:grid-cols-2">
+            {ecb.buildings.map((building, index) => (
+              <label class="choice">
+                <input
+                  type="radio"
+                  name="budova"
+                  value={building.id}
+                  checked={index === 0}
+                  data-label={building.label}
+                  data-price={building.price}
+                  data-limit={building.limit}
+                  data-large={building.priceLarge}
+                />
+                <span>
+                  <span class="choice__title">{building.label}</span>
+                  <span class="choice__text">{building.price ? `od ${formatEuro(building.price)}` : "individuálne"}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+          <label class="calc__area">
+            <span>Podlahová plocha</span>
+            <span class="calc__area-input">
+              <input type="number" name="plocha" min="10" max="20000" step="1" value="140" inputmode="numeric" />
+              <span aria-hidden="true">m²</span>
+            </span>
+          </label>
+        </fieldset>
+
+        <fieldset class="calc__group">
+          <legend class="calc__legend">Podklady a obhliadka</legend>
+          <div class="calc__options sm:grid-cols-2">
+            {ecb.documents.map((doc, index) => (
+              <label class="choice">
+                <input type="radio" name="podklady" value={doc.id} checked={index === 0} data-label={doc.label} data-extra={doc.extra} />
+                <span>
+                  <span class="choice__title">{doc.label}</span>
+                  <span class="choice__text">{doc.extra ? `+${formatEuro(doc.extra)}` : "Projekt nám pošlete nižšie vo formulári"}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+          <label class="choice mt-3">
+            <input type="checkbox" name="obhliadka" value="ano" checked data-label={ecb.visit.label} data-extra={ecb.visit.extra} />
+            <span>
+              <span class="choice__title">{ecb.visit.label}</span>
+              <span class="choice__text">+{formatEuro(ecb.visit.extra)} · pri zameraní je obhliadka v cene</span>
+            </span>
+          </label>
+        </fieldset>
+
+        <fieldset class="calc__group">
+          <legend class="calc__legend">Kde sa budova nachádza?</legend>
+          <div class="calc__options sm:grid-cols-2">
+            {ecb.regions.map((region, index) => (
+              <label class="choice">
+                <input type="radio" name="lokalita" value={region.id} checked={index === 0} data-label={region.label} data-extra={region.extra} />
+                <span>
+                  <span class="choice__title">{region.label}</span>
+                  <span class="choice__text">{region.extra ? `cestovné +${formatEuro(region.extra)}` : "bez cestovného"}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      </form>
+
+      <aside class="summary lg:sticky lg:top-[calc(var(--header-height)+1.5rem)]" aria-labelledby="calc-title">
+        <p id="calc-title" class="text-sm font-medium uppercase tracking-eyebrow text-energy">Cena certifikátu</p>
+        <p class="summary__price" aria-live="polite" data-total>—</p>
+        <p class="mt-1 text-sm text-muted" data-total-note></p>
+        <noscript><p class="mt-3 text-sm leading-6 text-muted">Na výpočet potrebujete JavaScript – ceny sú uvedené pri každej voľbe.</p></noscript>
+        <p class="mt-5 flex gap-2 border-t border-border pt-5 text-sm leading-6 text-muted">
+          <Icon name="clock" class="mt-0.5 h-5 w-5 shrink-0 text-energy" />{ecb.delivery}
+        </p>
+        <a href="#dopyt" class="summary__cta">
+          Nahrať podklady a objednať
+          <Icon name="arrow-down" variant="mini" class="h-5 w-5" />
+        </a>
+        <p class="mt-3 text-center text-xs text-muted">{site.credentials.responseTime}</p>
+      </aside>
+    </div>
+
+    <div class="mx-auto mt-14 max-w-3xl sm:mt-20">
+      <InquiryForm
+        title="Nahrajte podklady – nacenenie pošleme do 24 hodín"
+        help="Priložte projektovú dokumentáciu, pôdorysy alebo fotky. Po odoslaní vám príde e-mail, že sme podklady prijali, a do 24 hodín presné nacenenie."
+        topic="Energetický certifikát / PEH"
+        fixedTopic
+        back="/energeticky-certifikat/"
+        submitLabel="Odoslať podklady"
+        messagePlaceholder="Adresa budovy, rok výstavby, termín kolaudácie alebo predaja, kedy je možná obhliadka…"
+      />
+    </div>
+  </main>
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .oso {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--spacing) * 3);
+    padding: calc(var(--spacing) * 4) calc(var(--spacing) * 5);
+    border: 1px solid color-mix(in oklch, var(--color-energy) 50%, var(--color-border));
+    border-radius: var(--radius-lg);
+    background: var(--color-energy-soft);
+    color: var(--color-energy);
+    text-decoration: none;
+  }
+
+  .oso strong {
+    font-size: 1.125rem;
+  }
+
+  .oso:hover {
+    border-color: var(--color-energy);
+  }
+
+  .calc__group {
+    margin: 0;
+    padding: calc(var(--spacing) * 6);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    min-inline-size: 0;
+  }
+
+  .calc__legend {
+    float: left;
+    width: 100%;
+    margin-bottom: calc(var(--spacing) * 4);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+
+  .calc__legend + * {
+    clear: both;
+  }
+
+  .calc__options {
+    display: grid;
+    gap: calc(var(--spacing) * 3);
+  }
+
+  .choice {
+    display: flex;
+    gap: calc(var(--spacing) * 3);
+    min-height: 2.75rem;
+    padding: calc(var(--spacing) * 4);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: var(--color-background);
+    cursor: pointer;
+    transition: border-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .choice:hover {
+    border-color: var(--color-energy);
+  }
+
+  .choice:has(:checked) {
+    border-color: var(--color-energy);
+    box-shadow: inset 0 0 0 1px var(--color-energy);
+    background: color-mix(in oklch, var(--color-energy-soft) 60%, var(--color-background));
+  }
+
+  .choice:has(:focus-visible) {
+    outline: 2px solid var(--color-energy);
+    outline-offset: 2px;
+  }
+
+  .choice input {
+    flex: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-top: 0.2rem;
+    accent-color: var(--color-energy);
+  }
+
+  .choice input:focus-visible {
+    outline: none;
+  }
+
+  .choice__title {
+    display: block;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .choice__text {
+    display: block;
+    margin-top: calc(var(--spacing) * 1);
+    font-size: 0.875rem;
+    color: var(--color-muted);
+  }
+
+  .calc__area {
+    display: grid;
+    gap: calc(var(--spacing) * 2);
+    margin-top: calc(var(--spacing) * 5);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .calc__area-input {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing) * 3);
+    max-width: 14rem;
+  }
+
+  .calc__area input {
+    width: 100%;
+    min-height: 3rem;
+    padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font: inherit;
+    font-size: 1rem;
+  }
+
+  .calc__area input:focus-visible {
+    outline: 2px solid var(--color-energy);
+    outline-offset: 1px;
+  }
+
+  .summary {
+    padding: calc(var(--spacing) * 7);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-2xl);
+    background: var(--color-surface-elevated);
+    box-shadow:
+      inset 0 3px 0 var(--color-energy),
+      var(--shadow-soft);
+  }
+
+  .summary__price {
+    margin-top: calc(var(--spacing) * 2);
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: var(--color-foreground);
+  }
+
+  .summary__cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--spacing) * 2);
+    min-height: 3rem;
+    margin-top: calc(var(--spacing) * 6);
+    padding: calc(var(--spacing) * 3) calc(var(--spacing) * 5);
+    border-radius: var(--radius-md);
+    background: var(--color-action);
+    color: var(--color-on-action);
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: var(--shadow-card);
+  }
+
+  .summary__cta:hover {
+    background: var(--color-action-hover);
+    box-shadow: var(--shadow-lifted);
+  }
+</style>
+
+<script>
+  // Certificate price: building base (by area) + purpose + documents + visit +
+  // travel. Values come from data-* attributes rendered from pricing.json.
+  const form = document.querySelector<HTMLFormElement>("[data-calc]");
+  const total = document.querySelector<HTMLElement>("[data-total]");
+  const note = document.querySelector<HTMLElement>("[data-total-note]");
+  const details = document.querySelector<HTMLInputElement>("[data-inquiry-details]");
+  const euro = (value: number) => `${Math.round(value).toLocaleString("sk-SK").replace(/ /g, " ")} €`;
+  const pick = (name: string) => form?.querySelector<HTMLInputElement>(`input[name="${name}"]:checked`) ?? null;
+  const extra = (input: HTMLInputElement | null) => Number(input?.dataset.extra ?? 0);
+
+  const update = () => {
+    if (!form || !total || !note) return;
+    const building = pick("budova");
+    const purpose = pick("ucel");
+    const docs = pick("podklady");
+    const visit = pick("obhliadka");
+    const region = pick("lokalita");
+    const area = Number(form.querySelector<HTMLInputElement>('input[name="plocha"]')?.value || 0);
+    const base = Number(building?.dataset.price ?? 0);
+    const limit = Number(building?.dataset.limit ?? 0);
+    const large = Number(building?.dataset.large ?? 0);
+    const overLimit = limit > 0 && area > limit;
+    const buildingPrice = overLimit ? large : base;
+    const surveyed = docs?.value === "nemam";
+
+    const summary = [
+      `Účel: ${purpose?.dataset.label}`,
+      `Budova: ${building?.dataset.label}, ${area || "?"} m²`,
+      `Podklady: ${docs?.dataset.label}`,
+      `Obhliadka: ${visit || surveyed ? "áno" : "nie"}`,
+      `Lokalita: ${region?.dataset.label}`,
+    ];
+
+    if (!buildingPrice) {
+      total.textContent = "Individuálne";
+      note.textContent = "Pošlite podklady – nacenenie do 24 hodín.";
+      if (details) details.value = [...summary, "Cena: individuálne nacenenie"].join("\n");
+      return;
+    }
+    // A survey already includes the visit, so the visit fee is not added twice.
+    const sum = buildingPrice + extra(purpose) + extra(docs) + (visit && !surveyed ? extra(visit) : 0) + extra(region);
+    total.textContent = euro(sum);
+    note.textContent = overLimit ? `Pre plochu nad ${limit} m².` : "Konečná cena, ak sa podklady zhodujú so skutočnosťou.";
+    if (details) details.value = [...summary, `Cena z kalkulačky: ${euro(sum)}`].join("\n");
+  };
+
+  update();
+  form?.addEventListener("change", update);
+  form?.addEventListener("input", update);
+</script>

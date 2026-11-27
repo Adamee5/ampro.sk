@@ -1,0 +1,435 @@
+---
+/**
+ * Inquiry form shared by Kontakt, the configurator, the certificate
+ * calculator and Pre firmy. Posts to /api/inquiry (Resend) – with optional
+ * file attachments – and shows the success state in place. Without JS the
+ * form posts natively (multipart) and the function redirects back to
+ * `back` + #odoslane. A page can fill the hidden `details` field (the
+ * configurator summary) through `[data-inquiry-details]`.
+ */
+import Button from "@/components/ui/Button.astro";
+import Icon from "@/components/ui/Icon.astro";
+import { site } from "@/data/site";
+import { withBase } from "@/lib/navigation";
+
+export interface Props {
+  title?: string;
+  help?: string;
+  /** Pre-selected topic (must be one of the CMS topics to be selectable). */
+  topic?: string;
+  /** Show the file picker (výkresy, fotky, projekt). */
+  allowFiles?: boolean;
+  /** Page path the no-JS post returns to, e.g. "/konfigurator/". */
+  back?: string;
+  submitLabel?: string;
+  messagePlaceholder?: string;
+  /** Hide the "Téma" select (the page sets the topic itself). */
+  fixedTopic?: boolean;
+}
+
+const {
+  title = "Nezáväzný dopyt",
+  help = `Vyplňte pár údajov a dopyt nám príde rovno do e-mailu. ${site.credentials.responseTime}`,
+  topic = "",
+  allowFiles = true,
+  back = "/kontakt/",
+  submitLabel = "Odoslať dopyt",
+  messagePlaceholder = "Stručne popíšte, čo potrebujete a kedy (obec, termín, čo už máte).",
+  fixedTopic = false,
+} = Astro.props;
+
+const page = site.contactPage;
+const inquiryTo = page.form.recipients?.length ? page.form.recipients : site.company.contacts.map((person) => person.email);
+const topics = page.form.topics ?? [];
+---
+
+<section id="dopyt" class="rounded-3xl border border-border bg-surface p-6 shadow-card sm:p-7 md:p-9" aria-labelledby="inquiry-title" data-reveal="fade">
+  <h2 id="inquiry-title" class="text-2xl text-foreground md:text-3xl">{title}</h2>
+  <p id="inquiry-help" class="mt-2 leading-7 text-muted">{help}</p>
+
+  <form
+    class="inquiry mt-6 grid gap-5"
+    action={withBase("/api/inquiry")}
+    method="post"
+    enctype="multipart/form-data"
+    aria-describedby="inquiry-help inquiry-required"
+    data-inquiry
+    data-to={inquiryTo[0]}
+    data-cc={inquiryTo.slice(1).join(",")}
+  >
+    <input type="hidden" name="back" value={back} />
+    <input type="hidden" name="details" value="" data-inquiry-details />
+    <p id="inquiry-required" class="text-sm text-muted">Polia označené <span class="inquiry__mark" aria-hidden="true">*</span> sú povinné.</p>
+    <div class="inquiry__row">
+      <label class="inquiry__field">
+        <span>Meno a priezvisko <span class="inquiry__mark" aria-hidden="true">*</span></span>
+        <input name="name" type="text" autocomplete="name" required minlength="2" maxlength="120" placeholder="Jana Nováková" aria-describedby="inquiry-name-error" />
+        <span class="inquiry__error" id="inquiry-name-error">Vyplňte, prosím, meno.</span>
+      </label>
+      <label class="inquiry__field">
+        <span>Telefón <small>(nepovinné)</small></span>
+        <input name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="40" pattern="[+0-9 \(\)\-]{9,20}" placeholder="+421 900 123 456" aria-describedby="inquiry-phone-error" />
+        <span class="inquiry__error" id="inquiry-phone-error">Zadajte telefón v tvare +421 900 123 456.</span>
+      </label>
+    </div>
+    <label class="inquiry__field">
+      <span>E-mail <span class="inquiry__mark" aria-hidden="true">*</span></span>
+      <input name="email" type="email" autocomplete="email" required maxlength="200" pattern="[^@\s]+@[^@\s]+\.[^@\s]{2,}" placeholder="jana@example.sk" aria-describedby="inquiry-email-error" />
+      <span class="inquiry__error" id="inquiry-email-error">Zadajte platný e-mail, napr. jana@example.sk.</span>
+    </label>
+    {
+      fixedTopic ? (
+        <input type="hidden" name="topic" value={topic} />
+      ) : (
+        topics.length > 0 && (
+          <label class="inquiry__field">
+            <span>Čo riešite <small>(nepovinné)</small></span>
+            <select name="topic">
+              <option value="">Vyberte</option>
+              {topics.map((item) => <option selected={item === topic}>{item}</option>)}
+            </select>
+          </label>
+        )
+      )
+    }
+    <label class="inquiry__trap" aria-hidden="true">
+      Nevypĺňajte <input name="website" type="text" tabindex="-1" autocomplete="off" />
+    </label>
+    <label class="inquiry__field">
+      <span>Správa <span class="inquiry__mark" aria-hidden="true">*</span></span>
+      <textarea name="message" rows="5" required minlength="10" maxlength="4000" placeholder={messagePlaceholder} aria-describedby="inquiry-message-error"></textarea>
+      <span class="inquiry__error" id="inquiry-message-error">Napíšte nám, prosím, aspoň pár slov (min. 10 znakov).</span>
+    </label>
+    {
+      allowFiles && (
+        <label class="inquiry__field inquiry__files">
+          <span>Podklady <small>(nepovinné – projekt, výkresy, geometrický plán, fotky; spolu do 25 MB)</small></span>
+          <input
+            name="files"
+            type="file"
+            multiple
+            accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,.dwg,.dxf,.ifc,.zip,.rar,.7z,.doc,.docx,.xls,.xlsx,.txt"
+            data-inquiry-files
+          />
+          <span class="inquiry__hint" data-inquiry-files-info>Po odoslaní vám príde potvrdenie, že sme podklady prijali.</span>
+        </label>
+      )
+    }
+    <div class="flex flex-wrap items-center gap-4">
+      <Button as="button" type="submit" variant="primary" size="lg">{submitLabel}</Button>
+      <p class="text-sm text-muted" role="status" aria-live="polite" data-inquiry-status></p>
+    </div>
+  </form>
+
+  <div id="odoslane" class="inquiry__success mt-6" role="status" tabindex="-1" data-inquiry-success>
+    <Icon name="check-circle" class="inquiry__success-icon h-7 w-7" />
+    <div>
+      <p class="inquiry__success-title">{page.form.successTitle}</p>
+      <p class="mt-1 leading-7">{page.form.successText}</p>
+      <button type="button" class="inquiry__again" data-inquiry-again>Napísať ďalšiu správu</button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .inquiry__field {
+    display: grid;
+    align-content: start;
+    gap: calc(var(--spacing) * 2);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  /* Fields side by side share their rows (label / input / error) through
+     subgrid, so an error under one field never pushes the other out of line. */
+  .inquiry__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: calc(var(--spacing) * 5);
+    row-gap: calc(var(--spacing) * 2);
+  }
+
+  .inquiry__row > .inquiry__field {
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+    gap: inherit;
+  }
+
+  .inquiry__row > .inquiry__field + .inquiry__field {
+    margin-top: calc(var(--spacing) * 3);
+  }
+
+  @media (min-width: 640px) {
+    .inquiry__row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .inquiry__row > .inquiry__field + .inquiry__field {
+      margin-top: 0;
+    }
+  }
+
+  .inquiry__field small {
+    font-weight: 400;
+    color: var(--color-subtle);
+  }
+
+  .inquiry__field :is(input, select, textarea) {
+    width: 100%;
+    min-height: 3rem;
+    padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 400;
+    transition: border-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .inquiry__files input {
+    border-style: dashed;
+    cursor: pointer;
+  }
+
+  .inquiry__files input::file-selector-button {
+    margin-inline-end: calc(var(--spacing) * 3);
+    padding: calc(var(--spacing) * 2) calc(var(--spacing) * 4);
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: var(--color-action);
+    color: var(--color-on-action);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .inquiry__hint {
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: var(--color-muted);
+  }
+
+  .inquiry__trap {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .inquiry__field textarea {
+    resize: vertical;
+  }
+
+  .inquiry__field :is(input, select, textarea):focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 1px;
+    border-color: var(--color-primary);
+  }
+
+  .inquiry__mark {
+    color: var(--color-danger);
+  }
+
+  .inquiry__error {
+    display: none;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-danger);
+  }
+
+  /* Validation states show only after the visitor touched the field (or tried
+     to submit) – :user-valid / :user-invalid, no JS. Empty optional fields
+     stay neutral. */
+  .inquiry__field :is(input, textarea):user-invalid {
+    border-color: var(--color-danger);
+    box-shadow: 0 0 0 1px var(--color-danger);
+    background: color-mix(in oklch, var(--color-danger-soft) 55%, var(--color-background));
+  }
+
+  .inquiry__field:has(:user-invalid) .inquiry__error {
+    display: block;
+  }
+
+  .inquiry__field :is(input:not([type="file"]), textarea):user-valid:not(:placeholder-shown),
+  .inquiry__field select:user-valid:has(option:checked:not([value=""])) {
+    border-color: var(--color-success);
+    box-shadow: 0 0 0 1px var(--color-success);
+  }
+
+  .inquiry__field :is(input, textarea):user-invalid:focus-visible {
+    outline-color: var(--color-danger);
+  }
+
+  .inquiry__field ::placeholder {
+    color: var(--color-subtle);
+  }
+
+  .inquiry__success {
+    display: flex;
+    gap: calc(var(--spacing) * 4);
+    padding: calc(var(--spacing) * 5);
+    border: 1px solid var(--color-success);
+    border-radius: var(--radius-lg);
+    background: var(--color-success-soft);
+    color: var(--color-foreground);
+  }
+
+  .inquiry__success :global(.inquiry__success-icon) {
+    flex: none;
+    color: var(--color-success);
+  }
+
+  .inquiry[hidden] {
+    display: none;
+  }
+
+  /* Shown by the script after sending ([data-shown]); without JS the form
+     posts to /api/inquiry, which redirects back to #odoslane. (Not the hidden
+     attribute: Tailwind's preflight hides it with a layered !important that
+     :target cannot override.) */
+  .inquiry__success:not([data-shown], :target) {
+    display: none;
+  }
+
+  section:has(.inquiry__success:target) .inquiry {
+    display: none;
+  }
+
+  .inquiry__success:focus-visible {
+    outline: 2px solid var(--color-success);
+    outline-offset: 2px;
+  }
+
+  .inquiry__success-title {
+    font-weight: 600;
+    font-size: 1.125rem;
+  }
+
+  .inquiry__again {
+    margin-top: calc(var(--spacing) * 3);
+    min-height: 2.75rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-primary);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  // Sends the inquiry (with attachments) through /api/inquiry (Resend). If the
+  // endpoint is not available (missing config, outage) it falls back to a
+  // prepared mailto: e-mail – attachments then have to be added by hand.
+  // Validation is native (required, pattern, minlength) and styled in CSS.
+  const MAX_BYTES = 25 * 1024 * 1024;
+  const form = document.querySelector<HTMLFormElement>("[data-inquiry]");
+  const status = document.querySelector<HTMLElement>("[data-inquiry-status]");
+  const success = document.querySelector<HTMLElement>("[data-inquiry-success]");
+  const again = document.querySelector<HTMLButtonElement>("[data-inquiry-again]");
+  const files = document.querySelector<HTMLInputElement>("[data-inquiry-files]");
+  const filesInfo = document.querySelector<HTMLElement>("[data-inquiry-files-info]");
+  const submit = form?.querySelector<HTMLButtonElement>("button[type=submit]");
+  const defaultFilesInfo = filesInfo?.textContent ?? "";
+  let startedAt = Date.now();
+  const endpoint = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/api/inquiry`;
+
+  const setStatus = (text: string) => {
+    if (status) status.textContent = text;
+  };
+
+  const totalSize = () => [...(files?.files ?? [])].reduce((sum, file) => sum + file.size, 0);
+
+  files?.addEventListener("change", () => {
+    const count = files.files?.length ?? 0;
+    const mb = (totalSize() / 1024 / 1024).toFixed(1).replace(".", ",");
+    const tooBig = totalSize() > MAX_BYTES;
+    files.setCustomValidity(tooBig ? "Prílohy môžu mať spolu najviac 25 MB." : "");
+    if (filesInfo) {
+      filesInfo.textContent = count
+        ? `${count} ${count === 1 ? "súbor" : count < 5 ? "súbory" : "súborov"}, spolu ${mb} MB${tooBig ? " – príliš veľa, limit je 25 MB." : ""}`
+        : defaultFilesInfo;
+    }
+  });
+
+  const showSuccess = () => {
+    if (!form || !success) return;
+    form.reset();
+    if (filesInfo) filesInfo.textContent = defaultFilesInfo;
+    form.hidden = true;
+    success.dataset.shown = "";
+    success.focus();
+  };
+
+  if (new URLSearchParams(location.search).has("chyba")) {
+    setStatus("Dopyt sa nepodarilo odoslať. Skúste to, prosím, znova alebo nám napíšte e-mail.");
+  }
+
+  again?.addEventListener("click", () => {
+    if (!form || !success) return;
+    delete success.dataset.shown;
+    // Leave the no-JS #odoslane state (:target) without a new history entry.
+    if (location.hash === "#odoslane") location.replace("#dopyt");
+    form.hidden = false;
+    setStatus("");
+    startedAt = Date.now();
+    form.querySelector<HTMLInputElement>("input[name=name]")?.focus();
+  });
+
+  const openMailto = (data: FormData) => {
+    const value = (key: string) => String(data.get(key) ?? "").trim();
+    const topic = value("topic");
+    const subject = `Dopyt z webu${topic ? ` – ${topic}` : ""}`;
+    const details = [
+      `Meno: ${value("name")}`,
+      `E-mail: ${value("email")}`,
+      ...(value("phone") ? [`Telefón: ${value("phone")}`] : []),
+      ...(topic ? [`Téma: ${topic}`] : []),
+    ];
+    const body = [value("message"), ...(value("details") ? ["", value("details")] : []), "", ...details].join("\n");
+    const cc = form?.dataset.cc ? `&cc=${encodeURIComponent(form.dataset.cc)}` : "";
+    window.location.href = `mailto:${form?.dataset.to}?subject=${encodeURIComponent(subject)}${cc}&body=${encodeURIComponent(body)}`;
+    setStatus(
+      files?.files?.length
+        ? "Odoslanie z webu teraz nefunguje – otváram váš e-mailový program. Prílohy, prosím, priložte ručne."
+        : "Odoslanie z webu teraz nefunguje – otváram váš e-mailový program.",
+    );
+  };
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    const data = new FormData(form);
+    data.set("elapsed", String(Date.now() - startedAt));
+    if (submit) submit.disabled = true;
+    setStatus(files?.files?.length ? "Odosielam dopyt a prílohy…" : "Odosielam…");
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "X-Requested-With": "fetch" },
+        body: data,
+      });
+      const result = (await response.json().catch(() => ({}))) as { error?: string };
+      if (response.ok) {
+        setStatus("");
+        showSuccess();
+      } else if (response.status === 400 && result.error) {
+        setStatus(result.error);
+      } else {
+        openMailto(data);
+      }
+    } catch {
+      openMailto(data);
+    } finally {
+      if (submit) submit.disabled = false;
+    }
+  });
+</script>

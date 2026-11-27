@@ -1,0 +1,172 @@
+{
+  "accuracy": 15,
+  "note": "Ceny sú orientačné a platia pre bežný pozemok a rodinný dom. Presnú cenu potvrdíme po úvodnom hovore a pohľade na pozemok.",
+  "project": {
+    "seo": {
+      "title": "Konfigurátor ceny projektu rodinného domu",
+      "description": "Vyklikajte si stupeň dokumentácie, plochu, profesie a prípojky a hneď uvidíte orientačnú cenu projektu rodinného domu (±15 %).",
+      "keywords": ["cena projektu rodinného domu", "koľko stojí projekt domu", "cena stavebného zámeru"]
+    },
+    "title": "Koľko bude stáť projekt vášho domu?",
+    "text": "Vyberte, čo potrebujete. Cena sa prepočíta hneď – bez registrácie a bez zadávania kontaktu.",
+    "buildingTypes": [
+      {
+        "id": "rd",
+        "label": "Novostavba rodinného domu",
+        "text": "Bungalov alebo poschodový dom"
+      },
+      {
+        "id": "rekonstrukcia",
+        "label": "Rekonštrukcia / obnova",
+        "text": "Prestavba, prístavba, zateplenie, zmena dispozície"
+      }
+    ],
+    "renovationText": "Pri rekonštrukcii závisí cena od stavu domu a existujúcej dokumentácie. Pošlite nám pár fotiek alebo starý projekt a nacením vám to do 24 hodín.",
+    "sizes": [
+      {
+        "id": "small",
+        "label": "Do 150 m²",
+        "text": "Úžitková plocha bungalovu"
+      },
+      {
+        "id": "large",
+        "label": "Nad 150 m²",
+        "text": "Väčší dom (nad 300 m² na dopyt)"
+      }
+    ],
+    "stages": [
+      {
+        "id": "studia",
+        "label": "Štúdia / návrh",
+        "text": "Dispozícia a vzhľad domu v BIM modeli, 2–3 varianty.",
+        "priceSmall": 900,
+        "priceLarge": 1200
+      },
+      {
+        "id": "zamer",
+        "label": "Stavebný zámer",
+        "text": "Dokumentácia na posúdenie umiestnenia stavby (zákon 25/2025).",
+        "priceSmall": 1500,
+        "priceLarge": 1900
+      },
+      {
+        "id": "projekt",
+        "label": "Projekt stavby",
+        "text": "Architektúra a statika pre povolenie stavby.",
+        "priceSmall": 2600,
+        "priceLarge": 3300
+      },
+      {
+        "id": "vykonavaci",
+        "label": "Vykonávací projekt",
+        "text": "Detaily, výkazy výmer a podklady pre stavebnú firmu.",
+        "priceSmall": 1800,
+        "priceLarge": 2300
+      }
+    ],
+    "surcharges": [
+      {
+        "id": "podlazie",
+        "label": "Ďalšie podlažie",
+        "text": "Poschodie alebo obytné podkrovie",
+        "type": "percent",
+        "value": 15
+      },
+      {
+        "id": "garaz",
+        "label": "Garáž",
+        "text": "Vstavaná alebo samostatná",
+        "type": "fixed",
+        "value": 350
+      },
+      {
+        "id": "zahrada",
+        "label": "Zimná záhrada",
+        "text": "Presklená obytná časť",
+        "type": "fixed",
+        "value": 300
+      }
+    ],
+    "groups": [
+      {
+        "id": "tzb",
+        "title": "Profesie TZB",
+        "text": "Úrad ich zvyčajne požaduje k projektu stavby.",
+        "items": [
+          { "id": "elektro", "label": "Elektroinštalácia", "price": 450 },
+          { "id": "bleskozvod", "label": "Bleskozvod", "price": 150 },
+          { "id": "zti", "label": "Zdravotechnika (voda, kanalizácia)", "price": 400 },
+          { "id": "uk", "label": "Vykurovanie / tepelné čerpadlo", "price": 450 },
+          { "id": "vzt", "label": "Vetranie s rekuperáciou", "price": 400 },
+          { "id": "pbs", "label": "Požiarna bezpečnosť (PBS)", "price": 250 }
+        ]
+      },
+      {
+        "id": "pripojky",
+        "title": "Prípojky",
+        "text": "Vyberte len tie, ktoré naozaj potrebujete.",
+        "items": [
+          { "id": "p-elektro", "label": "Elektrická prípojka", "price": 200 },
+          { "id": "p-voda", "label": "Vodovodná prípojka", "price": 200 },
+          { "id": "p-kanal", "label": "Kanalizačná prípojka", "price": 200 },
+          { "id": "p-plyn", "label": "Plynová prípojka", "price": 250 }
+        ]
+      },
+      {
+        "id": "parcela",
+        "title": "Podľa pozemku a úradu",
+        "text": "Závisí od konkrétnej parcely a požiadaviek obce. Ak si nie ste istí, nechajte prázdne – overíme to.",
+        "items": [
+          { "id": "mur", "label": "Oporný múr", "price": 450 },
+          { "id": "vjazd", "label": "Dopravný vjazd a napojenie na cestu", "price": 350 },
+          { "id": "zumpa", "label": "Žumpa / domová ČOV", "price": 250 },
+          { "id": "studna", "label": "Studňa", "price": 250 },
+          { "id": "vsak", "label": "Vsakovanie dažďovej vody", "price": 250 },
+          { "id": "oplotenie", "label": "Oplotenie", "price": 200 }
+        ]
+      },
+      {
+        "id": "energia",
+        "title": "Energetika a služby navyše",
+        "text": "Energetiku robíme sami – bez ďalšieho subdodávateľa.",
+        "items": [
+          { "id": "peh", "label": "Projektové hodnotenie energetickej hospodárnosti (PEH)", "price": 250 },
+          { "id": "ecb", "label": "Energetický certifikát ku kolaudácii", "price": 250 },
+          { "id": "vizualizacie", "label": "Vizualizácie (3 pohľady)", "price": 300 },
+          { "id": "inziniering", "label": "Inžiniering – vybavenie vyjadrení a povolenia", "price": 500 },
+          { "id": "dozor", "label": "Autorský dozor", "price": 400 }
+        ]
+      }
+    ]
+  },
+  "ecb": {
+    "seo": {
+      "title": "Energetický certifikát – cena online",
+      "description": "Energetický certifikát ku kolaudácii, predaju aj pre Obnov dom. Vypočítajte si cenu, nahrajte podklady a my vám pošleme presné nacenenie do 24 hodín.",
+      "keywords": ["energetický certifikát Žilina", "energetický certifikát cena", "certifikát ku kolaudácii"]
+    },
+    "title": "Energetický certifikát bez zbytočného čakania",
+    "text": "Certifikáty vystavuje Ing. Adam Mahdiar, odborne spôsobilá osoba OSO č. 418. Vyberte, na čo certifikát potrebujete, a hneď uvidíte cenu.",
+    "delivery": "Zvyčajne do 5–7 pracovných dní od obhliadky a doručenia podkladov.",
+    "purposes": [
+      { "id": "kolaudacia", "label": "Kolaudácia novostavby", "extra": 0 },
+      { "id": "predaj", "label": "Predaj alebo prenájom", "extra": 0 },
+      { "id": "obnov", "label": "Obnov dom / dotácia", "extra": 150, "text": "+ návrh úsporných opatrení" }
+    ],
+    "buildings": [
+      { "id": "rd", "label": "Rodinný dom", "price": 250, "limit": 200, "priceLarge": 320 },
+      { "id": "byt", "label": "Byt", "price": 180, "limit": 120, "priceLarge": 220 },
+      { "id": "bd", "label": "Bytový dom", "price": 600, "limit": 1500, "priceLarge": 0 },
+      { "id": "nebytova", "label": "Nebytová budova", "price": 0, "limit": 0, "priceLarge": 0 }
+    ],
+    "documents": [
+      { "id": "mam", "label": "Mám projektovú dokumentáciu", "extra": 0 },
+      { "id": "nemam", "label": "Nemám – treba zameranie", "extra": 150 }
+    ],
+    "visit": { "label": "Obhliadka na mieste", "extra": 50 },
+    "regions": [
+      { "id": "zilinsky", "label": "Žilinský kraj", "extra": 0 },
+      { "id": "iny", "label": "Iný kraj", "extra": 60 }
+    ]
+  }
+}

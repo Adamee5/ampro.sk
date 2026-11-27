@@ -1,0 +1,62 @@
+{
+  "name": "AMpro.SK",
+  "tagline": "Projekcia a energetika budov",
+  "description": "Projekt rodinného domu, ktorý spĺňa A0 už na papieri. Projektant a energetik OSO č. 418 v jednej osobe – BIM model, projekt pre úrad, energetické hodnotenie aj certifikát. Žilina a celé Slovensko.",
+  "language": "sk",
+  "keywords": [
+    "projekt rodinného domu Žilina",
+    "energetický certifikát Žilina",
+    "projektové hodnotenie energetickej hospodárnosti",
+    "stavebný zámer",
+    "projekt stavby",
+    "BIM projektant",
+    "dom A0",
+    "AMpro SK"
+  ],
+  "social": {
+    "facebook": "",
+    "instagram": ""
+  },
+  "company": {
+    "legalName": "AMpro SK, s. r. o.",
+    "ico": "56507712",
+    "dic": "2122326305",
+    "street": "Žilinská cesta 582/57D",
+    "postalCode": "013 11",
+    "city": "Lietavská Lúčka",
+    "region": "Žilinský kraj",
+    "country": "SK",
+    "areaServed": "Žilinský kraj a celé Slovensko",
+    "geo": {
+      "latitude": 49.154,
+      "longitude": 18.735
+    },
+    "openingHours": [
+      {
+        "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        "opens": "08:00",
+        "closes": "17:00"
+      }
+    ],
+    "openingNote": "Stretnutia po predchádzajúcej dohode – u vás, na pozemku alebo online.",
+    "contacts": [
+      {
+        "name": "Ing. Adam Mahdiar",
+        "role": "Projektant a energetik · konateľ",
+        "phone": "+421 910 769 741",
+        "email": "adame.mah@gmail.com"
+      }
+    ],
+    "mapEmbed": ""
+  },
+  "credentials": {
+    "oso": "OSO č. 418",
+    "osoText": "Odborne spôsobilá osoba na energetickú certifikáciu budov",
+    "registerUrl": "https://verejnyportal.sksi.sk/search",
+    "responseTime": "Odpovieme do 24 hodín v pracovné dni."
+  },
+  "analytics": {
+    "gtmId": ""
+  },
+  "googleSiteVerification": ""
+}

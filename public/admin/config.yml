@@ -1,0 +1,565 @@
+# Decap CMS – https://decapcms.org/docs/configuration-options/
+#
+# Content lives in src/data/content/*.json and is committed to GitHub.
+# Login runs through the Cloudflare Pages Functions in /functions/api (GitHub
+# OAuth app, see the decap-cms skill). Local editing: `bun run cms:local` next to
+# `bun run dev`, then open http://localhost:4321/admin/.
+#
+# Labels are Slovak. Decap has no Slovak UI locale, so its own buttons stay
+# Czech (locale: cs) – the closest language.
+
+backend:
+  name: github
+  repo: Adamee5/ampro.sk
+  branch: main
+  base_url: https://www.ampro.sk # production URL (OAuth functions run there)
+  auth_endpoint: api/auth
+  squash_merges: true
+  commit_messages:
+    create: "content({{collection}}): create {{slug}}"
+    update: "content({{collection}}): update {{slug}}"
+    delete: "content({{collection}}): delete {{slug}}"
+    uploadMedia: "content(media): upload {{path}}"
+    deleteMedia: "content(media): delete {{path}}"
+    openAuthoring: "content: {{message}}"
+
+# Draft → review → ready → publish. Every draft is a pull request, so
+# Cloudflare builds a preview before anything goes live.
+publish_mode: editorial_workflow
+local_backend: true
+
+locale: cs
+site_url: https://www.ampro.sk
+display_url: https://www.ampro.sk
+logo_url: /images/favicons/web-app-manifest-192x192.png
+
+slug:
+  encoding: ascii
+  clean_accents: true
+  sanitize_replacement: "-"
+
+# Photos are compressed to AVIF in the editor's browser and committed to
+# public/gallery/ by the "photo" and "project-gallery" widgets
+# (photo-upload.js → image-pipeline.js + repo-store.js). No image service.
+# Decap's own media library is only a fallback.
+media_folder: public/images/uploads
+public_folder: /images/uploads
+
+collections:
+  # ----------------------------------------------------------- Referencie
+  - name: projekty
+    label: Referencie
+    label_singular: Referenciu
+    description: >-
+      Stránka Referencie (/referencie/). Každá položka je jeden projekt –
+      nadpis, podnadpis, popis a galéria fotiek (architektúra, profesie,
+      kladačské výkresy, vizualizácie, realizácie). Fotky nahráte priamo
+      v editore, poradie určujete šípkami. Prvá fotka je v galérii veľká.
+    folder: src/data/content/projects
+    extension: json
+    format: json
+    create: true
+    delete: true
+    slug: "{{fields.slug}}"
+    identifier_field: title
+    summary: "{{order}}. {{title}}"
+    sortable_fields: ["order", "title"]
+    editor:
+      preview: false
+    fields:
+      - { name: title, label: Nadpis, widget: string, hint: "Názov projektu, stručne a výstižne." }
+      - { name: subtitle, label: Podnadpis, widget: string, required: false, hint: "Krátky riadok pod nadpisom, napr. Rodinný dom, Žilina · 2026 · A0." }
+      - name: text
+        label: Popis
+        widget: markdown
+        modes: [rich_text]
+        minimal: true
+        buttons: [bold, italic, bulleted-list, numbered-list, link]
+        editor_components: []
+        hint: "Zadanie, riešenie (izolácia, TČ, rekuperácia, FVE), energetická trieda a potreba energie v kWh/m²·rok, čo sme robili my."
+      - name: images
+        label: Fotky
+        widget: project-gallery
+        default: []
+      - name: order
+        label: Poradie na stránke
+        widget: number
+        value_type: int
+        min: 1
+        default: 1
+        hint: Menšie číslo = vyššie na stránke (najnovší projekt dajte na 1).
+      - name: slug
+        label: Adresa projektu
+        widget: string
+        pattern: ["^[a-z0-9-]+$", "Len malé písmená bez diakritiky, čísla a pomlčky, napr. rd-zilina-2026"]
+        hint: Časť odkazu – /referencie/#rd-zilina-2026. Po vytvorení už nemeňte (podľa nej sa volá priečinok s fotkami).
+
+  # -------------------------------------------------------------- Stránky
+  - name: stranky
+    label: Stránky
+    description: Texty jednotlivých stránok webu.
+    editor:
+      preview: false
+    files:
+      - name: uvod
+        label: Úvodná stránka
+        file: src/data/content/home.json
+        fields:
+          - name: hero
+            label: Úvodná fotka a hlavný text
+            widget: object
+            fields:
+              - { name: eyebrow, label: Drobný text nad nadpisom, widget: string }
+              - { name: title, label: Hlavný nadpis, widget: text, hint: "Stručne – je to prvé, čo návštevník uvidí." }
+              - { name: text, label: Podnadpis, widget: text, required: false, hint: "Nepovinné – keď zostane prázdne, pod nadpisom nič nie je." }
+              - { name: image, label: Fotka na pozadí, widget: photo, hint: "Na šírku, ideálne 2400 px. Zobrazuje sa stmavená." }
+              - { name: imageAlt, label: Popis fotky, widget: string, hint: "Čo je na fotke – pre nevidiacich a vyhľadávače." }
+              - name: primaryCta
+                label: Hlavné tlačidlo
+                widget: object
+                collapsed: true
+                fields:
+                  - { name: label, label: Text, widget: string }
+                  - { name: href, label: Odkaz, widget: string, hint: "Napr. /konfigurator/ alebo /kontakt/#dopyt (rovno na formulár)" }
+              - name: secondaryCta
+                label: Druhé tlačidlo
+                widget: object
+                collapsed: true
+                fields:
+                  - { name: label, label: Text, widget: string }
+                  - { name: href, label: Odkaz, widget: string }
+          - name: doors
+            label: Dve cesty (pod úvodnou fotkou)
+            widget: object
+            collapsed: true
+            fields:
+              - { name: eyebrow, label: Drobný text, widget: string }
+              - { name: title, label: Nadpis, widget: string }
+              - name: items
+                label: Karty
+                label_singular: kartu
+                widget: list
+                summary: "{{fields.label}}"
+                fields:
+                  - { name: tone, label: Farba, widget: select, options: [{ label: "Modrá (projekcia)", value: design }, { label: "Zelená (energetika)", value: energy }] }
+                  - { name: label, label: Drobný text, widget: string }
+                  - { name: title, label: Nadpis, widget: string }
+                  - { name: text, label: Text, widget: text }
+                  - { name: cta, label: Text odkazu, widget: string }
+                  - { name: href, label: Odkaz, widget: string }
+              - name: links
+                label: Odkazy pod kartami
+                label_singular: odkaz
+                widget: list
+                summary: "{{fields.label}}"
+                fields:
+                  - { name: label, label: Text, widget: string }
+                  - { name: href, label: Odkaz, widget: string }
+          - name: axes
+            label: Projekcia + energetika (dve osi)
+            widget: object
+            collapsed: true
+            fields:
+              - { name: eyebrow, label: Drobný text, widget: string }
+              - { name: title, label: Nadpis, widget: string }
+              - { name: text, label: Text, widget: text }
+              - name: design
+                label: Modrá os – projekcia
+                widget: object
+                fields:
+                  - { name: title, label: Nadpis, widget: string }
+                  - { name: items, label: Body, widget: list, field: { name: item, label: Bod, widget: string } }
+              - name: energy
+                label: Zelená os – energetika
+                widget: object
+                fields:
+                  - { name: title, label: Nadpis, widget: string }
+                  - { name: items, label: Body, widget: list, field: { name: item, label: Bod, widget: string } }
+              - { name: intersection, label: Text v priesečníku, widget: string }
+          - name: process
+            label: Postup v krokoch
+            widget: object
+            collapsed: true
+            fields:
+              - { name: eyebrow, label: Drobný text, widget: string }
+              - { name: title, label: Nadpis, widget: string }
+              - name: steps
+                label: Kroky
+                label_singular: krok
+                widget: list
+                summary: "{{fields.title}}"
+                fields:
+                  - { name: title, label: Nadpis, widget: string }
+                  - { name: time, label: Trvanie, widget: string }
+                  - { name: text, label: Text, widget: text }
+          - name: trust
+            label: Prečo AMpro (karty)
+            widget: object
+            collapsed: true
+            fields:
+              - { name: eyebrow, label: Drobný text, widget: string }
+              - { name: title, label: Nadpis, widget: string }
+              - name: items
+                label: Karty
+                label_singular: kartu
+                widget: list
+                summary: "{{fields.title}}"
+                hint: Prvá karta má odkaz „Overiť v registri SKSI“.
+                fields:
+                  - { name: icon, label: Ikona, widget: string, hint: "Názov ikony z heroicons.com, napr. shield-check, cube, scale, map-pin." }
+                  - { name: title, label: Nadpis, widget: string }
+                  - { name: text, label: Text, widget: text }
+          - name: reviews
+            label: Recenzie klientov
+            widget: object
+            collapsed: true
+            hint: Kým je zoznam recenzií prázdny, sekcia sa na webe nezobrazuje.
+            fields:
+              - { name: eyebrow, label: Drobný text, widget: string }
+              - { name: title, label: Nadpis, widget: string }
+              - { name: googleUrl, label: Odkaz na recenzie Google, widget: string, required: false }
+              - name: items
+                label: Recenzie
+                label_singular: recenziu
+                widget: list
+                required: false
+                summary: "{{fields.author}}"
+                fields:
+                  - { name: author, label: Meno a obec, widget: string, hint: "Napr. Jana N., Bytča" }
+                  - { name: text, label: Text recenzie, widget: text }
+                  - { name: rating, label: Počet hviezdičiek, widget: number, value_type: int, min: 1, max: 5, default: 5 }
+          - name: faq
+            label: Časté otázky
+            label_singular: otázku
+            widget: list
+            collapsed: true
+            summary: "{{fields.question}}"
+            hint: Zobrazia sa na úvodnej stránke a Google ich môže ukázať priamo vo výsledkoch hľadania.
+            fields:
+              - { name: question, label: Otázka, widget: string }
+              - { name: answer, label: Odpoveď, widget: text }
+          - name: cta
+            label: Výzva na konci stránky
+            widget: object
+            collapsed: true
+            fields:
+              - { name: eyebrow, label: Drobný text, widget: string }
+              - { name: title, label: Nadpis, widget: text }
+              - { name: label, label: Text tlačidla, widget: string }
+              - { name: href, label: Odkaz tlačidla, widget: string }
+          - &seo
+            name: seo
+            label: Vyhľadávače (SEO)
+            widget: object
+            collapsed: true
+            fields:
+              - { name: title, label: Titulok stránky, widget: string, hint: "Do 60 znakov. Zobrazí sa v Googli a na karte prehliadača." }
+              - { name: description, label: Popis stránky, widget: text, hint: "120–160 znakov. Text pod odkazom v Googli." }
+              - { name: keywords, label: Kľúčové slová stránky, widget: list, required: false, hint: "Doplnia sa ku kľúčovým slovám z Nastavení." }
+
+      - name: sprievodca
+        label: Sprievodca (neviem, kde začať)
+        file: src/data/content/guide.json
+        fields:
+          - { name: title, label: Nadpis, widget: string }
+          - { name: text, label: Text, widget: text }
+          - name: questions
+            label: Otázky
+            widget: list
+            allow_add: false
+            summary: "{{fields.question}}"
+            hint: "Môžete meniť znenie otázok a odpovedí. Identifikátory (id) nemeňte – podľa nich sprievodca vyberá odporúčanie."
+            fields:
+              - { name: id, label: Identifikátor, widget: string }
+              - { name: question, label: Otázka, widget: string }
+              - name: options
+                label: Odpovede
+                widget: list
+                allow_add: false
+                summary: "{{fields.label}}"
+                fields:
+                  - { name: id, label: Identifikátor, widget: string }
+                  - { name: label, label: Text odpovede, widget: string }
+          - *seo
+
+      - name: pre-firmy
+        label: Pre firmy (B2B)
+        file: src/data/content/b2b.json
+        fields:
+          - { name: eyebrow, label: Drobný text, widget: string }
+          - { name: title, label: Nadpis, widget: string }
+          - { name: text, label: Text, widget: text }
+          - name: services
+            label: Služby
+            label_singular: službu
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { name: icon, label: Ikona, widget: string, hint: "Názov ikony z heroicons.com, napr. cpu-chip, scissors, cube." }
+              - { name: title, label: Nadpis, widget: string }
+              - { name: text, label: Text, widget: text }
+          - { name: pricingText, label: Text o cene, widget: text }
+          - { name: formTitle, label: Nadpis formulára, widget: string }
+          - *seo
+
+      - name: referencie-stranka
+        label: Referencie – úvod stránky
+        file: src/data/content/projects.json
+        fields:
+          - { name: eyebrow, label: Drobný text, widget: string }
+          - { name: title, label: Nadpis, widget: string }
+          - { name: text, label: Text, widget: text }
+          - *seo
+
+      - name: kontakt
+        label: Kontakt a formuláre
+        file: src/data/content/contact.json
+        fields:
+          - { name: title, label: Nadpis, widget: string }
+          - { name: text, label: Text, widget: text }
+          - name: form
+            label: Formulár (platí pre všetky formuláre na webe)
+            widget: object
+            collapsed: true
+            fields:
+              - { name: recipients, label: Komu chodia dopyty, widget: list, field: { name: email, label: E-mail, widget: string }, required: false, hint: "Adresy, na ktoré web pošle dopyt z formulára. Keď je zoznam prázdny, dopyt ide všetkým kontaktom z Nastavení." }
+              - { name: topics, label: Možnosti „Čo riešite“, widget: list, field: { name: topic, label: Možnosť, widget: string }, required: false, hint: "Ponuka v rozbaľovacom poli formulára. Prázdne = pole sa nezobrazí." }
+              - { name: successTitle, label: Nadpis po odoslaní, widget: string, hint: "Zobrazí sa na webe hneď po odoslaní." }
+              - { name: successText, label: Text po odoslaní, widget: text }
+              - { name: confirmationSubject, label: Predmet potvrdzovacieho e-mailu, widget: string, hint: "E-mail, ktorý dostane zákazník ako potvrdenie (bez príloh)." }
+              - { name: confirmationText, label: Text potvrdzovacieho e-mailu, widget: text, hint: "Pod text sa automaticky pripojí kópia správy a kontakty." }
+              - { name: attachmentsConfirmationSubject, label: Predmet e-mailu „prílohy prijaté“, widget: string, hint: "Pošle sa namiesto bežného potvrdenia, keď zákazník priloží súbory." }
+              - { name: attachmentsConfirmationText, label: Text e-mailu „prílohy prijaté“, widget: text, hint: "Pod text sa automaticky pripojí zoznam príloh, kópia správy a kontakty." }
+          - *seo
+
+  # --------------------------------------------------------------- Cenník
+  - name: cennik
+    label: Cenník
+    description: Ceny pre konfigurátor projektu (/konfigurator/) a kalkulačku energetického certifikátu (/energeticky-certifikat/). Ceny v celých eurách.
+    editor:
+      preview: false
+    files:
+      - name: ceny
+        label: Ceny a texty
+        file: src/data/content/pricing.json
+        fields:
+          - { name: accuracy, label: Presnosť odhadu (± %), widget: number, value_type: int, min: 0, max: 50, hint: "Konfigurátor zobrazí rozpätie cena ± toto percento." }
+          - { name: note, label: Poznámka pod cenou, widget: text }
+          - name: project
+            label: Konfigurátor projektu
+            widget: object
+            collapsed: true
+            fields:
+              - { name: title, label: Nadpis stránky, widget: string }
+              - { name: text, label: Text pod nadpisom, widget: text }
+              - name: buildingTypes
+                label: Typy stavby
+                widget: list
+                allow_add: false
+                summary: "{{fields.label}}"
+                hint: "Identifikátory rd a rekonstrukcia nemeňte."
+                fields:
+                  - { name: id, label: Identifikátor, widget: string }
+                  - { name: label, label: Názov, widget: string }
+                  - { name: text, label: Popis, widget: string }
+              - { name: renovationText, label: Text pri rekonštrukcii, widget: text, hint: "Zobrazí sa namiesto cien, keď návštevník zvolí rekonštrukciu." }
+              - name: sizes
+                label: Veľkosti domu
+                widget: list
+                allow_add: false
+                summary: "{{fields.label}}"
+                hint: "Prvá = cena „do 150 m²“, druhá = „nad 150 m²“ pri stupňoch dokumentácie."
+                fields:
+                  - { name: id, label: Identifikátor, widget: hidden }
+                  - { name: label, label: Názov, widget: string }
+                  - { name: text, label: Popis, widget: string }
+              - name: stages
+                label: Stupne dokumentácie
+                label_singular: stupeň
+                widget: list
+                summary: "{{fields.label}} – {{fields.priceSmall}} / {{fields.priceLarge}} €"
+                fields:
+                  - { name: id, label: Identifikátor, widget: string, pattern: ["^[a-z0-9-]+$", "Malé písmená bez diakritiky"] }
+                  - { name: label, label: Názov, widget: string }
+                  - { name: text, label: Popis, widget: text }
+                  - { name: priceSmall, label: Cena do 150 m² (€), widget: number, value_type: int, min: 0 }
+                  - { name: priceLarge, label: Cena nad 150 m² (€), widget: number, value_type: int, min: 0 }
+              - name: surcharges
+                label: Príplatky (podlažie, garáž…)
+                label_singular: príplatok
+                widget: list
+                summary: "{{fields.label}}"
+                fields:
+                  - { name: id, label: Identifikátor, widget: string, pattern: ["^[a-z0-9-]+$", "Malé písmená bez diakritiky"] }
+                  - { name: label, label: Názov, widget: string }
+                  - { name: text, label: Popis, widget: string }
+                  - { name: type, label: Typ, widget: select, options: [{ label: "Percento z ceny stupňov", value: percent }, { label: "Pevná suma (€)", value: fixed }] }
+                  - { name: value, label: Hodnota, widget: number, value_type: int, min: 0 }
+              - name: groups
+                label: Skupiny položiek (profesie, prípojky…)
+                label_singular: skupinu
+                widget: list
+                summary: "{{fields.title}}"
+                fields:
+                  - { name: id, label: Identifikátor, widget: string, pattern: ["^[a-z0-9-]+$", "Malé písmená bez diakritiky"] }
+                  - { name: title, label: Nadpis, widget: string }
+                  - { name: text, label: Popis, widget: text }
+                  - name: items
+                    label: Položky
+                    label_singular: položku
+                    widget: list
+                    summary: "{{fields.label}} – {{fields.price}} €"
+                    fields:
+                      - { name: id, label: Identifikátor, widget: string, pattern: ["^[a-z0-9-]+$", "Malé písmená bez diakritiky"], hint: "Sprievodca používa: elektro, zti, uk, bleskozvod, vzt, peh, ecb, vizualizacie, inziniering." }
+                      - { name: label, label: Názov, widget: string }
+                      - { name: price, label: Cena (€), widget: number, value_type: int, min: 0 }
+              - *seo
+          - name: ecb
+            label: Kalkulačka energetického certifikátu
+            widget: object
+            collapsed: true
+            fields:
+              - { name: title, label: Nadpis stránky, widget: string }
+              - { name: text, label: Text pod nadpisom, widget: text }
+              - { name: delivery, label: Termín vyhotovenia, widget: string }
+              - name: purposes
+                label: Účel
+                widget: list
+                summary: "{{fields.label}}"
+                fields:
+                  - { name: id, label: Identifikátor, widget: string }
+                  - { name: label, label: Názov, widget: string }
+                  - { name: extra, label: Príplatok (€), widget: number, value_type: int, min: 0 }
+                  - { name: text, label: Poznámka, widget: string, required: false }
+              - name: buildings
+                label: Typy budov
+                widget: list
+                summary: "{{fields.label}} – {{fields.price}} €"
+                hint: "Cena 0 = „individuálne“ (nacenenie na dopyt)."
+                fields:
+                  - { name: id, label: Identifikátor, widget: string }
+                  - { name: label, label: Názov, widget: string }
+                  - { name: price, label: Cena (€), widget: number, value_type: int, min: 0 }
+                  - { name: limit, label: Do plochy (m²), widget: number, value_type: int, min: 0, hint: "Nad touto plochou platí cena nižšie." }
+                  - { name: priceLarge, label: Cena nad limit (€), widget: number, value_type: int, min: 0, hint: "0 = nad limit individuálne." }
+              - name: documents
+                label: Podklady
+                widget: list
+                allow_add: false
+                summary: "{{fields.label}}"
+                fields:
+                  - { name: id, label: Identifikátor, widget: hidden }
+                  - { name: label, label: Názov, widget: string }
+                  - { name: extra, label: Príplatok (€), widget: number, value_type: int, min: 0 }
+              - name: visit
+                label: Obhliadka
+                widget: object
+                fields:
+                  - { name: label, label: Názov, widget: string }
+                  - { name: extra, label: Príplatok (€), widget: number, value_type: int, min: 0 }
+              - name: regions
+                label: Lokalita
+                widget: list
+                summary: "{{fields.label}}"
+                fields:
+                  - { name: id, label: Identifikátor, widget: string }
+                  - { name: label, label: Názov, widget: string }
+                  - { name: extra, label: Cestovné (€), widget: number, value_type: int, min: 0 }
+              - *seo
+
+  # ------------------------------------------------------------ Nastavenia
+  - name: nastaveni
+    label: Nastavenia
+    description: Kontakty, sídlo, oprávnenia a údaje pre vyhľadávače – platí pre celý web.
+    editor:
+      preview: false
+    files:
+      - name: firma
+        label: Firma a kontakty
+        file: src/data/content/settings.json
+        fields:
+          - { name: name, label: Názov webu, widget: string }
+          - { name: tagline, label: Podtitul, widget: string }
+          - { name: description, label: Popis firmy (vyhľadávače), widget: text }
+          - { name: language, label: Jazyk webu, widget: hidden, default: sk }
+          - name: keywords
+            label: Kľúčové slová
+            widget: list
+            allow_add: true
+            field: { name: keyword, label: Slovo, widget: string }
+          - name: credentials
+            label: Oprávnenia a sľuby
+            widget: object
+            collapsed: true
+            fields:
+              - { name: oso, label: Číslo oprávnenia, widget: string, hint: "Napr. OSO č. 418" }
+              - { name: osoText, label: Popis oprávnenia, widget: string }
+              - { name: registerUrl, label: Odkaz na register SKSI, widget: string }
+              - { name: responseTime, label: Sľub rýchlosti odpovede, widget: string, hint: "Zobrazuje sa pri formulároch a kontaktoch." }
+          - { name: googleSiteVerification, label: Overenie Google Search Console, widget: string, required: false, hint: "Kód z meta tagu google-site-verification. Nemeniť." }
+          - name: analytics
+            label: Meranie návštevnosti
+            widget: object
+            collapsed: true
+            fields:
+              - { name: gtmId, label: Google Tag Manager ID, widget: string, required: false, hint: "Napr. GTM-XXXXXXX. Prázdne = bez merania." }
+          - name: social
+            label: Sociálne siete
+            widget: object
+            collapsed: true
+            fields:
+              - { name: facebook, label: Facebook, widget: string, required: false }
+              - { name: instagram, label: Instagram, widget: string, required: false }
+          - name: company
+            label: Firma a sídlo
+            widget: object
+            fields:
+              - name: contacts
+                label: Kontaktné osoby
+                label_singular: kontakt
+                widget: list
+                summary: "{{fields.name}}"
+                fields:
+                  - { name: name, label: Meno, widget: string }
+                  - { name: role, label: Pozícia, widget: string }
+                  - { name: phone, label: Telefón, widget: string, hint: "V tvare +421 900 000 000" }
+                  - { name: email, label: E-mail, widget: string }
+              - { name: street, label: Ulica a číslo, widget: string }
+              - { name: postalCode, label: PSČ, widget: string }
+              - { name: city, label: Obec, widget: string }
+              - { name: region, label: Kraj, widget: string }
+              - { name: country, label: Krajina (kód), widget: string, default: SK }
+              - { name: openingNote, label: Poznámka k stretnutiu, widget: string }
+              - name: openingHours
+                label: Pracovný čas
+                label_singular: riadok
+                widget: list
+                collapsed: true
+                summary: "{{fields.opens}}–{{fields.closes}}"
+                fields:
+                  - name: days
+                    label: Dni
+                    widget: select
+                    multiple: true
+                    options:
+                      - { label: Pondelok, value: Monday }
+                      - { label: Utorok, value: Tuesday }
+                      - { label: Streda, value: Wednesday }
+                      - { label: Štvrtok, value: Thursday }
+                      - { label: Piatok, value: Friday }
+                      - { label: Sobota, value: Saturday }
+                      - { label: Nedeľa, value: Sunday }
+                  - { name: opens, label: Od, widget: string, pattern: ["^\\d{2}:\\d{2}$", "V tvare 08:00"] }
+                  - { name: closes, label: Do, widget: string, pattern: ["^\\d{2}:\\d{2}$", "V tvare 17:00"] }
+              - { name: legalName, label: Prevádzkovateľ, widget: string }
+              - { name: ico, label: IČO, widget: string, required: false }
+              - { name: dic, label: DIČ, widget: string, required: false }
+              - { name: areaServed, label: Kde pôsobíte, widget: string }
+              - name: geo
+                label: Poloha na mape (GPS)
+                widget: object
+                collapsed: true
+                fields:
+                  - { name: latitude, label: Zemepisná šírka, widget: number, value_type: float }
+                  - { name: longitude, label: Zemepisná dĺžka, widget: number, value_type: float }
+              - { name: mapEmbed, label: Odkaz na vloženú mapu Google, widget: text, required: false, hint: "Google Mapy → Zdieľať → Vložiť mapu → skopírujte adresu zo src=\"…\"." }

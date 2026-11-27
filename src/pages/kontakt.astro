@@ -1,0 +1,80 @@
+---
+import Icon from "@/components/ui/Icon.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SectionIntro from "@/components/SectionIntro.astro";
+import InquiryForm from "@/components/InquiryForm.astro";
+import { site, telHref } from "@/data/site";
+
+const page = site.contactPage;
+const linkClass =
+  "group flex items-center gap-3 rounded-xl border border-border bg-background px-4 py-3 text-foreground transition-colors duration-fast ease-standard hover:border-primary hover:text-primary focus-visible:border-primary focus-visible:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+const iconClass =
+  "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors duration-fast ease-standard";
+---
+
+<BaseLayout
+  title={page.seo.title}
+  description={page.seo.description}
+  keywords={page.seo.keywords}
+  pageType="ContactPage"
+  pathname="/kontakt/"
+  breadcrumbs={[
+    { name: "Úvod", href: "/" },
+    { name: "Kontakt", href: "/kontakt/" },
+  ]}
+>
+  <SiteHeader pathname={Astro.url.pathname} />
+  <main id="main" class="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
+    <SectionIntro level={1} eyebrow="Kontakt" title={page.title} text={page.text} />
+
+    <div class="mt-10 grid gap-6 sm:mt-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-8">
+      <div class="grid content-start gap-6">
+        {
+          site.company.contacts.map((contact) => (
+            <article class="rounded-2xl border border-border bg-surface p-6 shadow-card sm:p-8" data-reveal>
+              <p class="text-xs font-medium uppercase tracking-eyebrow text-primary sm:text-sm">{contact.role}</p>
+              <h2 class="mt-2 text-2xl text-foreground sm:text-3xl">{contact.name}</h2>
+              <p class="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted">
+                <Icon name="shield-check" class="h-4 w-4 text-energy" />
+                <span>{site.credentials.osoText}, <strong class="font-semibold text-energy">{site.credentials.oso}</strong></span>
+              </p>
+              <div class="mt-6 flex flex-col gap-3">
+                <a href={telHref(contact.phone)} class={linkClass} aria-label={`Zavolať – ${contact.name} (${contact.phone})`}>
+                  <span class={iconClass}><Icon name="phone" class="h-4 w-4" /></span>
+                  <span class="text-sm sm:text-base">{contact.phone}</span>
+                </a>
+                <a href={`mailto:${contact.email}`} class={linkClass} aria-label={`Napísať e-mail – ${contact.name} (${contact.email})`}>
+                  <span class={iconClass}><Icon name="envelope" class="h-4 w-4" /></span>
+                  <span class="break-words text-sm sm:text-base">{contact.email.split("@")[0]}@<wbr />{contact.email.split("@")[1]}</span>
+                </a>
+              </div>
+              <p class="mt-5 text-sm leading-6 text-muted">{site.credentials.responseTime}</p>
+            </article>
+          ))
+        }
+
+        <address
+          class="flex flex-col rounded-2xl border border-border bg-surface p-6 not-italic shadow-card sm:p-7"
+          aria-labelledby="contact-address-label"
+        >
+          <div class="flex items-center gap-3">
+            <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <Icon name="map-pin" class="h-5 w-5" />
+            </span>
+            <p id="contact-address-label" class="text-xs font-medium uppercase tracking-eyebrow text-primary sm:text-sm">Sídlo</p>
+          </div>
+          <p class="mt-4 text-lg leading-7 text-foreground">{site.company.address}</p>
+          <p class="mt-2 text-sm leading-6 text-muted">{site.company.openingNote}</p>
+          <p class="mt-6 border-t border-border pt-4 text-xs leading-5 text-muted">
+            {site.company.legalName} · IČO {site.company.ico} · DIČ {site.company.dic}
+          </p>
+        </address>
+      </div>
+
+      <InquiryForm back="/kontakt/" />
+    </div>
+  </main>
+  <SiteFooter />
+</BaseLayout>

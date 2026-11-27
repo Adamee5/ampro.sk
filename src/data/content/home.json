@@ -1,0 +1,169 @@
+{
+  "seo": {
+    "title": "Projekt rodinného domu a energetika budov – Žilina",
+    "description": "Projekt RD, ktorý spĺňa A0 už na papieri. BIM model, stavebný zámer, projekt stavby, PEH aj energetický certifikát z jednej ruky. Orientačná cena online.",
+    "keywords": ["projektant rodinných domov Žilina", "projekt domu A0", "konfigurátor ceny projektu"]
+  },
+  "hero": {
+    "eyebrow": "BIM · A0 · Žilina a celé Slovensko",
+    "title": "Projekt domu, ktorý spĺňa A0 už na papieri.",
+    "text": "Navrhneme váš dom v BIM, prepočítame jeho energetiku a vybavíme certifikát ku kolaudácii. Projektant a energetik OSO č. 418 v jednej osobe – nemusíte hľadať nikoho ďalšieho.",
+    "image": "/gallery/web/hero",
+    "imageAlt": "Moderný rodinný dom so sedlovou strechou a drevenými posuvnými žalúziami",
+    "primaryCta": {
+      "href": "/konfigurator/",
+      "label": "Zistiť orientačnú cenu"
+    },
+    "secondaryCta": {
+      "href": "/sprievodca/",
+      "label": "Neviem, kde začať"
+    }
+  },
+  "doors": {
+    "eyebrow": "Kde ste práve teraz?",
+    "title": "Vyberte si cestu, ktorá vám sedí",
+    "items": [
+      {
+        "tone": "design",
+        "label": "Ešte neviem, čo chcem",
+        "title": "Sprievodca v 5 otázkach",
+        "text": "Máte pozemok alebo len nápad? Odpovedzte na pár otázok a odporučíme vám postup, rozsah projektu aj ďalší krok.",
+        "cta": "Spustiť sprievodcu",
+        "href": "/sprievodca/"
+      },
+      {
+        "tone": "energy",
+        "label": "Viem, čo hľadám",
+        "title": "Konfigurátor ceny projektu",
+        "text": "Vyklikajte si stupeň dokumentácie, plochu, profesie a prípojky. Orientačnú cenu (±15 %) uvidíte hneď, bez zadávania kontaktu.",
+        "cta": "Otvoriť konfigurátor",
+        "href": "/konfigurator/"
+      }
+    ],
+    "links": [
+      {
+        "label": "Potrebujem len energetický certifikát",
+        "href": "/energeticky-certifikat/"
+      },
+      {
+        "label": "Som firma – výkresy pre výrobu a BIM",
+        "href": "/pre-firmy/"
+      }
+    ]
+  },
+  "axes": {
+    "eyebrow": "Čo robíme inak",
+    "title": "Projekcia a energetika sa stretávajú v jednom bode",
+    "text": "Väčšina projektantov rieši energetiku až na konci, cez ďalšieho človeka. U nás sa dom navrhuje a prepočítava súčasne – v jednom BIM modeli.",
+    "design": {
+      "title": "Projekcia",
+      "items": [
+        "Architektonická štúdia a BIM model",
+        "Stavebný zámer a projekt stavby podľa zákona 25/2025",
+        "Statika, profesie TZB a prípojky",
+        "Vykonávací projekt a výkaz výmer"
+      ]
+    },
+    "energy": {
+      "title": "Energetika",
+      "items": [
+        "Návrh obálky a techniky pre triedu A0",
+        "Projektové hodnotenie energetickej hospodárnosti (PEH)",
+        "Energetický certifikát ku kolaudácii",
+        "Poradenstvo k dotáciám (Obnov dom, Zelená domácnostiam)"
+      ]
+    },
+    "intersection": "Jeden model, jeden človek, jedna zodpovednosť."
+  },
+  "process": {
+    "eyebrow": "Postup",
+    "title": "Od nápadu po kolaudáciu v 5 krokoch",
+    "steps": [
+      {
+        "title": "Úvodný hovor",
+        "time": "do 24 hodín",
+        "text": "Prejdeme pozemok, rozpočet a vaše predstavy. Poviete nám, čo už máte (geometrický plán, regulatívy obce, inšpirácie)."
+      },
+      {
+        "title": "Návrh v BIM",
+        "time": "2–4 týždne",
+        "text": "Dispozícia a vzhľad domu v 3D modeli. Pozriete si ho skôr, než sa čokoľvek nakreslí pre úrad."
+      },
+      {
+        "title": "Energetický prepočet",
+        "time": "súbežne s návrhom",
+        "text": "Overíme triedu A0 už na modeli – hrúbky izolácie, okná, tepelné čerpadlo, rekuperácia, fotovoltika."
+      },
+      {
+        "title": "Projekt pre úrad",
+        "time": "4–8 týždňov",
+        "text": "Stavebný zámer a projekt stavby so všetkými profesiami, prípojkami a PEH. Pomôžeme aj s inžinieringom."
+      },
+      {
+        "title": "Certifikát ku kolaudácii",
+        "time": "po dokončení stavby",
+        "text": "Energetický certifikát vystavíme sami – poznáme dom od prvej čiary, takže bez zbytočného zameriavania."
+      }
+    ]
+  },
+  "trust": {
+    "eyebrow": "Prečo AMpro",
+    "title": "Overiteľná odbornosť, nie len slová",
+    "items": [
+      {
+        "icon": "shield-check",
+        "title": "OSO č. 418",
+        "text": "Oprávnenie na energetickú certifikáciu budov si overíte vo verejnom registri SKSI."
+      },
+      {
+        "icon": "cube",
+        "title": "Projekt v BIM",
+        "text": "Dom vzniká ako 3D model – menej chýb medzi profesiami, presnejšie výkazy a rozpočet."
+      },
+      {
+        "icon": "scale",
+        "title": "Nezávislí od stavebných firiem",
+        "text": "Nepredávame domy ani materiál. Navrhneme to, čo dáva zmysel vám, nie dodávateľovi."
+      },
+      {
+        "icon": "map-pin",
+        "title": "Žilina a celé Slovensko",
+        "text": "Sídlime v Lietavskej Lúčke pri Žiline. Pozemok radi navštívime, projekty robíme pre celé Slovensko."
+      }
+    ]
+  },
+  "reviews": {
+    "eyebrow": "Referencie klientov",
+    "title": "Čo hovoria klienti",
+    "googleUrl": "",
+    "items": []
+  },
+  "faq": [
+    {
+      "question": "Koľko stojí projekt rodinného domu?",
+      "answer": "Záleží na stupni dokumentácie, ploche a profesiách. Projekt bungalovu do 150 m² na stavebný zámer a projekt stavby vrátane profesií a prípojok vychádza orientačne na 6 000 – 8 000 €. Presnejšiu sumu si vyklikáte v konfigurátore."
+    },
+    {
+      "question": "Čo je trieda A0 a musí ju môj dom spĺňať?",
+      "answer": "A0 je trieda budov s takmer nulovou potrebou energie. Nové rodinné domy ju musia spĺňať od roku 2021 (zákon č. 555/2005 Z. z.). Preto ju prepočítavame už pri návrhu, nie až pri kolaudácii."
+    },
+    {
+      "question": "Aký je rozdiel medzi PEH a energetickým certifikátom?",
+      "answer": "Projektové hodnotenie energetickej hospodárnosti (PEH) je súčasť projektu pre úrad a overuje, že navrhnutý dom splní požiadavky. Energetický certifikát sa vystavuje ku kolaudácii pre hotovú stavbu. Robíme oboje."
+    },
+    {
+      "question": "Čo znamená stavebný zámer a projekt stavby?",
+      "answer": "Od 1. 4. 2025 platí nový stavebný zákon č. 25/2025 Z. z. Stavebný zámer slúži na posúdenie umiestnenia stavby, projekt stavby na jej povolenie a vykonávací projekt na samotnú realizáciu. Radi vysvetlíme, ktorý stupeň potrebujete vy."
+    },
+    {
+      "question": "Ako rýchlo sa ozvete?",
+      "answer": "Na každý dopyt odpovieme do 24 hodín v pracovné dni."
+    }
+  ],
+  "cta": {
+    "eyebrow": "Ďalší krok",
+    "title": "Pozrite si orientačnú cenu, kým si dáte kávu.",
+    "label": "Otvoriť konfigurátor",
+    "href": "/konfigurator/"
+  }
+}
