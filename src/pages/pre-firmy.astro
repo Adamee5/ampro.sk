@@ -5,6 +5,7 @@ import SiteFooter from "@/components/SiteFooter.astro";
 import SectionIntro from "@/components/SectionIntro.astro";
 import InquiryForm from "@/components/InquiryForm.astro";
 import Icon from "@/components/ui/Icon.astro";
+import ResponsiveImage from "@/components/ui/ResponsiveImage.astro";
 import { site } from "@/data/site";
 
 const page = site.b2b;
@@ -22,7 +23,10 @@ const page = site.b2b;
 >
   <SiteHeader pathname={Astro.url.pathname} />
   <main id="main" class="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-    <SectionIntro level={1} eyebrow={page.eyebrow} title={page.title} text={page.text} />
+    <div class="grid items-center gap-8 lg:grid-cols-[1.3fr_1fr]">
+      <SectionIntro level={1} eyebrow={page.eyebrow} title={page.title} text={page.text} />
+      {page.image && <ResponsiveImage src={page.image} alt={page.imageAlt} width={800} height={600} max={1200} sizes="(min-width: 1024px) 40vw, 100vw" class="w-full rounded-2xl object-cover" />}
+    </div>
 
     <!-- Not links: no hover effect, so nothing suggests a click. -->
     <ul class="mt-10 grid list-none gap-6 sm:mt-12 sm:grid-cols-2">

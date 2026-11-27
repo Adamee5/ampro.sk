@@ -2,7 +2,11 @@
   "seo": {
     "title": "Projekt rodinného domu a energetika budov – Žilina",
     "description": "Projekt RD, ktorý spĺňa A0 už na papieri. BIM model, stavebný zámer, projekt stavby, PEH aj energetický certifikát z jednej ruky. Orientačná cena online.",
-    "keywords": ["projektant rodinných domov Žilina", "projekt domu A0", "konfigurátor ceny projektu"]
+    "keywords": [
+      "projektant rodinných domov Žilina",
+      "projekt domu A0",
+      "konfigurátor ceny projektu"
+    ]
   },
   "hero": {
     "eyebrow": "BIM · A0 · Žilina a celé Slovensko",
@@ -165,5 +169,32 @@
     "title": "Pozrite si orientačnú cenu, kým si dáte kávu.",
     "label": "Otvoriť konfigurátor",
     "href": "/konfigurator/"
+  },
+  "gallery": {
+    "eyebrow": "Od výkresu po dom",
+    "title": "Jeden projekt, celá cesta",
+    "text": "Od prvej čiary cez stavbu až po dom, ktorý míňa minimum energie.",
+    "items": [
+      {
+        "image": "/gallery/web/navrh",
+        "alt": "Projektant kreslí pôdorys domu ceruzkou a pravítkom",
+        "caption": "Návrh a BIM model"
+      },
+      {
+        "image": "/gallery/web/stavba",
+        "alt": "Drevená konštrukcia krovu rozostavaného domu proti modrej oblohe",
+        "caption": "Výkresy pre stavbu"
+      },
+      {
+        "image": "/gallery/web/fotovoltika",
+        "alt": "Strecha rodinného domu s fotovoltickými panelmi",
+        "caption": "Energetika A0"
+      },
+      {
+        "image": "/gallery/web/interier",
+        "alt": "Svetlá obývačka s veľkými oknami a výhľadom do prírody",
+        "caption": "Dom, v ktorom sa dobre žije"
+      }
+    ]
   }
 }

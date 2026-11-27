@@ -2,7 +2,12 @@
   "seo": {
     "title": "Pre firmy – výrobné výkresy, CNC a BIM modelovanie",
     "description": "Kladačské výkresy, výrobné výkresy pre CNC, nárezové plány a BIM modelovanie pre tesárov, výrobcov drevostavieb, stavebné firmy a ateliéry.",
-    "keywords": ["výrobné výkresy CNC", "kladačské výkresy", "BIM modelovanie", "nárezové plány"]
+    "keywords": [
+      "výrobné výkresy CNC",
+      "kladačské výkresy",
+      "BIM modelovanie",
+      "nárezové plány"
+    ]
   },
   "eyebrow": "Pre firmy a projektantov",
   "title": "Výkresy, podľa ktorých sa dá vyrábať",
@@ -30,5 +35,7 @@
     }
   ],
   "pricingText": "Každá zákazka je iná, preto ju naceníme individuálne. Pošlite výkresy alebo model a ozveme sa do 24 hodín.",
-  "formTitle": "Dopyt pre firmy"
+  "formTitle": "Dopyt pre firmy",
+  "image": "/gallery/web/cnc",
+  "imageAlt": "CNC fréza opracováva dosku podľa výrobného výkresu"
 }

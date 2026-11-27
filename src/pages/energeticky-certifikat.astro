@@ -5,6 +5,7 @@ import SiteFooter from "@/components/SiteFooter.astro";
 import SectionIntro from "@/components/SectionIntro.astro";
 import InquiryForm from "@/components/InquiryForm.astro";
 import Icon from "@/components/ui/Icon.astro";
+import ResponsiveImage from "@/components/ui/ResponsiveImage.astro";
 import { site, formatEuro } from "@/data/site";
 
 const { ecb } = site.pricing;
@@ -40,7 +41,10 @@ const service = {
   <SiteHeader pathname={Astro.url.pathname} />
   <main id="main" class="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
     <div class="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
-      <SectionIntro level={1} eyebrow="Energetická certifikácia" title={ecb.title} text={ecb.text} />
+      <div class="grid items-center gap-8 lg:grid-cols-[1.3fr_1fr]">
+        <SectionIntro level={1} eyebrow="Energetická certifikácia" title={ecb.title} text={ecb.text} />
+        {ecb.image && <ResponsiveImage src={ecb.image} alt={ecb.imageAlt} width={800} height={560} max={1200} sizes="(min-width: 1024px) 40vw, 100vw" class="w-full rounded-2xl object-cover" />}
+      </div>
       <a href={site.credentials.registerUrl} target="_blank" rel="noopener" class="oso">
         <Icon name="shield-check" class="h-6 w-6" />
         <span>

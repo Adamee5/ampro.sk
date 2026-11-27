@@ -155,6 +155,24 @@ collections:
                 fields:
                   - { name: label, label: Text, widget: string }
                   - { name: href, label: Odkaz, widget: string }
+          - name: gallery
+            label: Fotky „Od výkresu po dom“
+            widget: object
+            collapsed: true
+            hint: Pás fotiek pod dvoma cestami. Prázdny zoznam = sekcia sa skryje.
+            fields:
+              - { name: eyebrow, label: Drobný text, widget: string }
+              - { name: title, label: Nadpis, widget: string }
+              - { name: text, label: Text, widget: text, required: false }
+              - name: items
+                label: Fotky
+                label_singular: fotku
+                widget: list
+                summary: "{{fields.caption}}"
+                fields:
+                  - { name: image, label: Fotka, widget: photo, hint: "Na výšku alebo na šírku, zobrazí sa orezaná na 3:4." }
+                  - { name: alt, label: Popis fotky, widget: string }
+                  - { name: caption, label: Popisok pod fotkou, widget: string }
           - name: axes
             label: Projekcia + energetika (dve osi)
             widget: object
@@ -299,6 +317,8 @@ collections:
               - { name: title, label: Nadpis, widget: string }
               - { name: text, label: Text, widget: text }
           - { name: pricingText, label: Text o cene, widget: text }
+          - { name: image, label: Fotka pri nadpise, widget: photo, required: false }
+          - { name: imageAlt, label: Popis fotky, widget: string, required: false }
           - { name: formTitle, label: Nadpis formulára, widget: string }
           - *seo
 
@@ -422,6 +442,8 @@ collections:
               - { name: title, label: Nadpis stránky, widget: string }
               - { name: text, label: Text pod nadpisom, widget: text }
               - { name: delivery, label: Termín vyhotovenia, widget: string }
+              - { name: image, label: Fotka pri nadpise, widget: photo, required: false }
+              - { name: imageAlt, label: Popis fotky, widget: string, required: false }
               - name: purposes
                 label: Účel
                 widget: list
