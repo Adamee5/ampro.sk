@@ -1,5 +1,6 @@
 ---
 import { site } from "@/data/site";
+import CookieConsent from "@/components/CookieConsent.astro";
 import {
   baseGraph,
   breadcrumbList,
@@ -195,47 +196,64 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": grap
 
     <script is:inline type="application/ld+json" set:html={jsonLd} />
 
-    <!-- Google Tag Manager (Nastavenia → Meranie návštevnosti) – loaded after the
-         page (idle after load, or on the first interaction), so it never
-         competes with rendering. -->
+    <!-- Google Tag Manager (Nastavenia → Meranie návštevnosti) – only with the
+         visitor's consent (CookieConsent bar). A stored "granted" loads it after
+         the page (idle after load, or on the first interaction), so it never
+         competes with rendering; no choice yet → <html data-consent="ask"> shows
+         the bar; "denied" loads nothing. -->
     {site.gtmId && (
     <script is:inline define:vars={{ gtmId: site.gtmId }}>
       (function (w, d, id) {
-        w.dataLayer = w.dataLayer || [];
-        w.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
-        var done = false;
-        var events = ["pointerdown", "keydown", "scroll", "touchstart"];
+        var KEY = "cookie-consent";
+        var root = d.documentElement;
+        var loaded = false;
+        function stored() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+        function store(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
         function load() {
-          if (done) return;
-          done = true;
-          events.forEach(function (e) { w.removeEventListener(e, load); });
+          if (loaded) return;
+          loaded = true;
+          w.dataLayer = w.dataLayer || [];
+          w.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
           var j = d.createElement("script");
           j.async = true;
           j.src = "https://www.googletagmanager.com/gtm.js?id=" + id;
           d.head.appendChild(j);
         }
-        events.forEach(function (e) { w.addEventListener(e, load, { once: true, passive: true }); });
-        w.addEventListener("load", function () {
-          (w.requestIdleCallback || function (cb) { setTimeout(cb, 2000); })(load, { timeout: 4000 });
+        function loadLater() {
+          var events = ["pointerdown", "keydown", "scroll", "touchstart"];
+          function go() {
+            events.forEach(function (e) { w.removeEventListener(e, go); });
+            load();
+          }
+          events.forEach(function (e) { w.addEventListener(e, go, { once: true, passive: true }); });
+          w.addEventListener("load", function () {
+            (w.requestIdleCallback || function (cb) { setTimeout(cb, 2000); })(go, { timeout: 4000 });
+          });
+        }
+
+        var choice = stored();
+        if (choice === "granted") loadLater();
+        else if (choice !== "denied") root.dataset.consent = "ask";
+
+        // Bar buttons ([data-consent-choice]) and the footer "Nastavenia cookies" ([data-consent-open]).
+        d.addEventListener("click", function (e) {
+          var t = e.target instanceof Element ? e.target : null;
+          var pick = t && t.closest("[data-consent-choice]");
+          if (pick) {
+            var v = pick.getAttribute("data-consent-choice") === "granted" ? "granted" : "denied";
+            store(v);
+            delete root.dataset.consent;
+            if (v === "granted") load();
+            return;
+          }
+          if (t && t.closest("[data-consent-open]")) root.dataset.consent = "ask";
         });
       })(window, document, gtmId);
     </script>
     )}
   </head>
   <body class="bg-background text-foreground antialiased">
-    {
-      site.gtmId && (
-        <noscript>
-          <iframe
-            src={`https://www.googletagmanager.com/ns.html?id=${site.gtmId}`}
-            height="0"
-            width="0"
-            style="display:none;visibility:hidden"
-            title="Google Tag Manager"
-          />
-        </noscript>
-      )
-    }
+    <!-- No GTM <noscript> iframe: without JS there is no consent, so no tracking. -->
 
     <a
       href="#main"
@@ -244,6 +262,7 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": grap
       Preskočiť na obsah
     </a>
     <slot />
+    {site.gtmId && <CookieConsent />}
     {
       import.meta.env.PROD && (
         <script is:inline define:vars={{ swUrl: asset("sw.js"), scope: base }}>

@@ -1,0 +1,49 @@
+---
+/**
+ * Cookie consent bar (GDPR). Google Tag Manager is not loaded until the visitor
+ * clicks "Prijať" – the loader in BaseLayout reads the stored choice.
+ *
+ * Shown only when <html data-consent="ask"> (set by the head script when no
+ * choice is stored), so nothing flashes and without JS nothing is tracked.
+ * Buttons are handled by delegated listeners in BaseLayout; a footer button
+ * with [data-consent-open] reopens the bar.
+ */
+---
+
+<section
+  class="cookie-bar fixed inset-x-3 bottom-3 z-[var(--z-overlay)] mx-auto max-w-3xl rounded-2xl border border-border bg-surface-elevated p-4 text-foreground shadow-lifted sm:inset-x-6 sm:bottom-6 sm:p-5"
+  aria-label="Súhlas s cookies"
+>
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
+    <p class="text-sm leading-6 text-muted">
+      Návštevnosť webu by sme radi merali cez Google (Tag Manager a Analytics), aby sme ho mohli zlepšovať.
+      Meranie zapneme len s vaším súhlasom. Voľbu môžete kedykoľvek zmeniť v päte stránky.
+    </p>
+    <div class="grid shrink-0 grid-cols-2 gap-2">
+      <button
+        type="button"
+        data-consent-choice="denied"
+        class="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full border border-border-strong px-5 text-sm font-semibold text-foreground transition-colors duration-fast ease-standard hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      >
+        Odmietnuť
+      </button>
+      <button
+        type="button"
+        data-consent-choice="granted"
+        class="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full bg-action px-5 text-sm font-semibold text-on-action transition-colors duration-fast ease-standard hover:bg-action-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      >
+        Prijať
+      </button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cookie-bar {
+    display: none;
+  }
+
+  :global(:root[data-consent="ask"]) .cookie-bar {
+    display: block;
+  }
+</style>

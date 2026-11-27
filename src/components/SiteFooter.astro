@@ -65,6 +65,19 @@ const hasSocial = Object.values(site.social).some(Boolean);
     </p>
     <p class="leading-6 sm:text-right">
       <span class="block">© {new Date().getFullYear()} {site.name}. Všetky práva vyhradené.</span>
+      {
+        site.gtmId && (
+          <span class="block">
+            <button
+              type="button"
+              data-consent-open
+              class="inline-flex min-h-6 cursor-pointer items-center text-white underline decoration-white/30 underline-offset-4 transition-colors duration-fast hover:decoration-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              Nastavenia cookies
+            </button>
+          </span>
+        )
+      }
       <span class="block">
         Created by{" "}<a href="https://lukaschylik.dev/" class="text-white underline decoration-white/30 underline-offset-4 transition-colors duration-fast hover:decoration-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Lukáš Chylík</a>
       </span>
