@@ -20,15 +20,12 @@ const activePath =
       href={withBase("/")}
       class="flex min-w-0 items-center gap-2 no-underline min-[360px]:gap-3 sm:pr-2 lg:shrink-0"
     >
-      <img
-        src={withBase("/images/logo.svg")}
-        alt=""
-        width="48"
-        height="48"
-        class="h-10 w-10 shrink-0 object-contain min-[360px]:h-12 min-[360px]:w-12 dark:[filter:none] [filter:invert(1)_brightness(0.2)]"
-        loading="eager"
-        decoding="async"
-      />
+      <!-- Grey logo drawn through a CSS mask of logo.svg; a light streak sweeps through it once on load. -->
+      <span
+        class="site-logo h-10 w-10 shrink-0 min-[360px]:h-12 min-[360px]:w-12"
+        style={`--logo-url: url("${withBase("/images/logo.svg")}")`}
+        aria-hidden="true"
+      ></span>
       <span class="flex min-w-0 flex-col">
         <span class="text-[0.7rem] font-semibold uppercase leading-tight tracking-wide text-primary min-[400px]:tracking-eyebrow sm:text-[0.8rem]">
           {site.name}
@@ -75,3 +72,38 @@ const activePath =
     </div>
   </div>
 </header>
+
+<style>
+  .site-logo {
+    display: block;
+    background-color: var(--color-subtle);
+    -webkit-mask: var(--logo-url) center / contain no-repeat;
+    mask: var(--logo-url) center / contain no-repeat;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .site-logo {
+      /* Band sits in the middle of a 300 %-wide layer: 90 % = off left, 10 % = off right. */
+      background-image: linear-gradient(
+        100deg,
+        transparent 42%,
+        color-mix(in oklch, white 70%, transparent) 48%,
+        white 50%,
+        color-mix(in oklch, white 70%, transparent) 52%,
+        transparent 58%
+      );
+      background-size: 300% 100%;
+      background-repeat: no-repeat;
+      animation: logo-light 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.35s both;
+    }
+  }
+
+  @keyframes logo-light {
+    from {
+      background-position: 90% 0;
+    }
+    to {
+      background-position: 10% 0;
+    }
+  }
+</style>
