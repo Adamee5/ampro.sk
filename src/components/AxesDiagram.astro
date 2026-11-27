@@ -2,7 +2,8 @@
 /**
  * The business-card motif: a dashed blue axis (projekcia) and a dashed green
  * axis (energetika) crossing in one square – the point where AMpro works.
- * Pure SVG + CSS; the dashes "flow" only with motion allowed.
+ * Pure SVG + CSS; the dashes run in once (2 s) with motion allowed – never
+ * endlessly (WCAG 2.2.2).
  */
 export interface Props {
   caption: string;
@@ -82,11 +83,11 @@ const { caption } = Astro.props;
 
   @media (prefers-reduced-motion: no-preference) {
     .axes__line--design {
-      animation: axes-flow 1.85s linear infinite;
+      animation: axes-flow 1.85s linear 1 both;
     }
 
     .axes__line--energy {
-      animation: axes-flow 1.45s linear infinite reverse;
+      animation: axes-flow 1.45s linear 1 reverse both;
     }
 
     @keyframes axes-flow {

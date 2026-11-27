@@ -2,7 +2,10 @@
   "seo": {
     "title": "Sprievodca – neviem, kde začať",
     "description": "Päť krátkych otázok o vašom pozemku a plánoch. Odporučíme vám postup, rozsah projektu a predvyplníme konfigurátor ceny.",
-    "keywords": ["ako začať stavať dom", "postup pri stavbe rodinného domu"]
+    "keywords": [
+      "ako začať stavať dom",
+      "postup pri stavbe rodinného domu"
+    ]
   },
   "title": "Neviete, kde začať? To je v poriadku.",
   "text": "Odpovedzte na päť krátkych otázok. Na konci vám odporučíme postup a pripravíme orientačnú cenu.",
@@ -11,50 +14,112 @@
       "id": "plan",
       "question": "Čo plánujete?",
       "options": [
-        { "id": "novy", "label": "Postaviť nový rodinný dom" },
-        { "id": "rekon", "label": "Prerobiť alebo rozšíriť existujúci dom" },
-        { "id": "cert", "label": "Potrebujem len energetický certifikát" },
-        { "id": "nevim", "label": "Ešte presne neviem" }
-      ]
+        {
+          "id": "novy",
+          "label": "Postaviť nový rodinný dom"
+        },
+        {
+          "id": "rekon",
+          "label": "Prerobiť alebo rozšíriť existujúci dom"
+        },
+        {
+          "id": "cert",
+          "label": "Potrebujem len energetický certifikát"
+        },
+        {
+          "id": "nevim",
+          "label": "Ešte presne neviem"
+        }
+      ],
+      "icon": "am-dom"
     },
     {
       "id": "pozemok",
       "question": "Máte pozemok?",
       "options": [
-        { "id": "ano", "label": "Áno, mám ho" },
-        { "id": "kupujem", "label": "Práve ho kupujem / vyberám" },
-        { "id": "nie", "label": "Zatiaľ nie" }
-      ]
+        {
+          "id": "ano",
+          "label": "Áno, mám ho"
+        },
+        {
+          "id": "kupujem",
+          "label": "Práve ho kupujem / vyberám"
+        },
+        {
+          "id": "nie",
+          "label": "Zatiaľ nie"
+        }
+      ],
+      "icon": "am-pozemok"
     },
     {
       "id": "podklady",
       "question": "Čo už máte v ruke?",
       "options": [
-        { "id": "nic", "label": "Nič, len predstavu" },
-        { "id": "skica", "label": "Skicu alebo inšpirácie" },
-        { "id": "katalog", "label": "Katalógový projekt, ktorý treba upraviť" },
-        { "id": "projekt", "label": "Hotový projekt (chýbajú časti alebo energetika)" }
-      ]
+        {
+          "id": "nic",
+          "label": "Nič, len predstavu"
+        },
+        {
+          "id": "skica",
+          "label": "Skicu alebo inšpirácie"
+        },
+        {
+          "id": "katalog",
+          "label": "Katalógový projekt, ktorý treba upraviť"
+        },
+        {
+          "id": "projekt",
+          "label": "Hotový projekt (chýbajú časti alebo energetika)"
+        }
+      ],
+      "icon": "document-text"
     },
     {
       "id": "velkost",
       "question": "Aký veľký dom si predstavujete?",
       "options": [
-        { "id": "small", "label": "Bungalov do 150 m²" },
-        { "id": "large", "label": "Väčší dom nad 150 m²" },
-        { "id": "poschodie", "label": "Poschodový dom" },
-        { "id": "nevim", "label": "Neviem odhadnúť" }
-      ]
+        {
+          "id": "small",
+          "label": "Bungalov do 150 m²"
+        },
+        {
+          "id": "large",
+          "label": "Väčší dom nad 150 m²"
+        },
+        {
+          "id": "poschodie",
+          "label": "Poschodový dom"
+        },
+        {
+          "id": "nevim",
+          "label": "Neviem odhadnúť"
+        }
+      ],
+      "icon": "am-kota"
     },
     {
       "id": "priorita",
       "question": "Čo je pre vás najdôležitejšie?",
       "options": [
-        { "id": "energia", "label": "Nízke náklady na energie" },
-        { "id": "rychlost", "label": "Rýchlo získať povolenie" },
-        { "id": "dizajn", "label": "Dispozícia a vzhľad" },
-        { "id": "rozpocet", "label": "Udržať rozpočet" }
-      ]
+        {
+          "id": "energia",
+          "label": "Nízke náklady na energie"
+        },
+        {
+          "id": "rychlost",
+          "label": "Rýchlo získať povolenie"
+        },
+        {
+          "id": "dizajn",
+          "label": "Dispozícia a vzhľad"
+        },
+        {
+          "id": "rozpocet",
+          "label": "Udržať rozpočet"
+        }
+      ],
+      "icon": "am-obalka"
     }
   ]
 }

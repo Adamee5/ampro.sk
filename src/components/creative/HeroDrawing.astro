@@ -1,0 +1,214 @@
+---
+/**
+ * Signature 1 (docs/creative/experience.md): a section (rez) of a house drawn
+ * in ink, its thermal envelope hatched in the energy green, measured with
+ * blue dimension lines. Draws itself once on load (≤ 1.2 s, CSS only:
+ * stroke-dashoffset; every path is shorter than 1000 units); reduced motion / no animation shows
+ * the finished drawing. Decoration – the facts (A0, OSO) are in real text.
+ */
+import { site } from "@/data/site";
+
+const oso = site.credentials.oso;
+---
+
+<svg class="drawing" viewBox="0 0 420 380" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="hatch-ground" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="8" class="hatch-line" />
+    </pattern>
+    <pattern id="hatch-insulation" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+      <line x1="0" y1="0" x2="0" y2="6" class="hatch-energy" />
+    </pattern>
+  </defs>
+
+  <!-- sheet label -->
+  <g class="layer layer--label" style="--d: 0ms">
+    <text x="12" y="22" class="label label--small">REZ A–A · M 1:100</text>
+  </g>
+
+  <!-- ground -->
+  <g class="layer" style="--d: 0ms">
+    <path class="stroke" d="M10 300 H410" />
+  </g>
+  <rect class="fill-in" style="--d: 250ms" x="10" y="301" width="400" height="16" fill="url(#hatch-ground)" />
+
+  <!-- foundation + floor -->
+  <g class="layer" style="--d: 150ms">
+    <path class="stroke" d="M86 300 V318 H334 V300" />
+    <path class="stroke stroke--thin" d="M98 288 H322" />
+  </g>
+
+  <!-- thermal envelope (energy green hatch): walls, roof, slab -->
+  <g class="fill-in" style="--d: 650ms">
+    <path class="envelope" d="M86 300 V176 L210 84 L334 176 V300 H322 V182 L210 99 L98 182 V300 Z" fill="url(#hatch-insulation)" />
+    <rect class="envelope" x="98" y="288" width="224" height="12" fill="url(#hatch-insulation)" />
+  </g>
+
+  <!-- walls -->
+  <g class="layer" style="--d: 250ms">
+    <path class="stroke" d="M98 300 V182" />
+    <path class="stroke" d="M322 300 V182" />
+    <path class="stroke stroke--thin" d="M110 288 V190" />
+    <path class="stroke stroke--thin" d="M310 288 V190" />
+  </g>
+
+  <!-- roof -->
+  <g class="layer" style="--d: 450ms">
+    <path class="stroke" d="M72 186 L210 72 L348 186" />
+    <path class="stroke stroke--thin" d="M98 182 L210 99 L322 182" />
+    <path class="stroke stroke--thin" d="M110 190 H310" />
+  </g>
+
+  <!-- window + door -->
+  <g class="layer" style="--d: 550ms">
+    <path class="stroke stroke--thin" d="M150 210 H190 V262 H150 Z M170 210 V262" />
+    <path class="stroke stroke--thin" d="M242 220 H274 V288" />
+  </g>
+
+  <!-- envelope callout (green) -->
+  <g class="layer" style="--d: 850ms">
+    <path class="stroke stroke--energy" d="M334 230 L372 200 H412" />
+    <circle cx="334" cy="230" r="3" class="dot-energy" />
+  </g>
+  <g class="layer layer--label" style="--d: 1000ms">
+    <text x="412" y="193" text-anchor="end" class="label label--energy">obálka A0</text>
+  </g>
+
+  <!-- dimension lines (blue) -->
+  <g class="layer" style="--d: 850ms">
+    <path class="stroke stroke--design" d="M86 348 H334" />
+    <path class="stroke stroke--design" d="M86 326 V356 M334 326 V356" />
+    <path class="stroke stroke--design" d="M81 353 L91 343 M329 353 L339 343" />
+    <path class="stroke stroke--design" d="M40 300 V72" />
+    <path class="stroke stroke--design" d="M35 305 L45 295 M35 77 L45 67" />
+  </g>
+  <g class="layer layer--label" style="--d: 1000ms">
+    <rect x="160" y="338" width="100" height="20" class="label-bg" />
+    <text x="210" y="352" text-anchor="middle" class="label label--design">do 150 m²</text>
+    <text x="28" y="190" text-anchor="middle" class="label label--design" transform="rotate(-90 28 190)">{oso}</text>
+  </g>
+</svg>
+
+<style>
+  .drawing {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    color: var(--color-line);
+  }
+
+  .stroke {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .stroke--thin {
+    stroke-width: 1.2;
+  }
+
+  .stroke--design {
+    stroke: var(--color-primary);
+    stroke-width: 1.4;
+  }
+
+  .stroke--energy {
+    stroke: var(--color-energy);
+    stroke-width: 1.4;
+  }
+
+  .hatch-line {
+    stroke: currentColor;
+    stroke-width: 1;
+    opacity: 0.45;
+  }
+
+  .hatch-energy {
+    stroke: var(--color-energy);
+    stroke-width: 1.2;
+  }
+
+  .envelope {
+    stroke: var(--color-energy);
+    stroke-width: 0.8;
+  }
+
+  .dot-energy {
+    fill: var(--color-energy);
+  }
+
+  .label {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    fill: var(--color-foreground);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .label--small {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    fill: var(--color-muted);
+  }
+
+  .label--design {
+    fill: var(--color-primary);
+  }
+
+  .label--energy {
+    fill: var(--color-energy);
+  }
+
+  .label-bg {
+    fill: var(--color-background);
+  }
+
+  @media (forced-colors: active) {
+    .drawing,
+    .stroke--design,
+    .stroke--energy,
+    .envelope,
+    .hatch-energy {
+      stroke: CanvasText;
+      color: CanvasText;
+    }
+
+    .label,
+    .dot-energy {
+      fill: CanvasText;
+    }
+  }
+
+  /* The pen: each layer is stroked in order. Finished state is the default,
+     so reduced motion and no-animation show the complete drawing. */
+  @media (prefers-reduced-motion: no-preference) {
+    .layer .stroke {
+      stroke-dasharray: 1000;
+      animation: pen var(--duration-stroke) var(--ease-draft) var(--d, 0ms) both;
+    }
+
+    .layer--label,
+    .fill-in {
+      animation: settle var(--duration-label) var(--ease-settle) calc(var(--d, 0ms) + 120ms) both;
+    }
+  }
+
+  @keyframes pen {
+    from {
+      stroke-dashoffset: 1000;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes settle {
+    from {
+      opacity: 0;
+    }
+  }
+</style>

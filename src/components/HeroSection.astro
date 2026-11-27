@@ -1,190 +1,345 @@
 ---
 /**
- * Hero: full-bleed photo (LCP, preloaded via heroPreload() in the page) under
- * an ink overlay, the logo, headline and two CTAs. Content enters with a
- * short staggered rise (motion-safe only) and a scroll cue leads into the
- * first section (`#obsah`).
+ * Hero "Výkres naplno" (docs/creative/brief.md): the first screen is one
+ * drawing sheet – a framed sheet with grid coordinates on its edges (A–F,
+ * 1–4) like a real construction drawing, the business card's golden-split
+ * axis, the title set like the sheet's heading, a large self-drawing house
+ * section, and a small title block in the corner. LCP is the h1 (text).
  */
 import Icon from "@/components/ui/Icon.astro";
-import { site } from "@/data/site";
-import { hero } from "@/lib/images";
+import HeroDrawing from "@/components/creative/HeroDrawing.astro";
+import { site, sheetFor } from "@/data/site";
 import { withBase } from "@/lib/navigation";
 import Button from "./ui/Button.astro";
-import ResponsiveImage from "./ui/ResponsiveImage.astro";
 
-const hero_ = site.home.hero;
+const hero = site.home.hero;
+const sheet = sheetFor("/");
+const columns = ["A", "B", "C", "D", "E", "F"];
+const rows = ["1", "2", "3", "4"];
 ---
 
-<section class="relative isolate overflow-hidden bg-ink-deep" aria-labelledby="hero-title">
-  <div class="absolute inset-0" aria-hidden="true">
-    <ResponsiveImage
-      src={hero_.image}
-      alt=""
-      width={hero.width}
-      height={hero.height}
-      sizes={hero.sizes}
-      priority
-      class="h-full w-full scale-105 object-cover motion-safe:animate-hero-zoom"
-    />
-    <div class="hero__overlay absolute inset-0"></div>
-  </div>
+<section class="hero" aria-labelledby="hero-title">
+  <div class="sheet mx-auto max-w-7xl">
+    <!-- grid coordinates on the frame (decoration) -->
+    <ol class="coords coords--top" aria-hidden="true">{columns.map((c) => <li>{c}</li>)}</ol>
+    <ol class="coords coords--left" aria-hidden="true">{rows.map((r) => <li>{r}</li>)}</ol>
 
-  <div class="relative mx-auto flex min-h-[88svh] max-w-4xl flex-col items-center justify-center px-4 pb-24 pt-16 text-center sm:min-h-[92svh] sm:px-6 lg:px-8">
-    <div class="flex flex-col items-center gap-6 text-white sm:gap-7">
-      <p class="hero__rise hero__brand" style="--i: 0">
-        <span class="hero__wordmark"><strong>AM</strong>pro.SK</span>
-        <span class="hero__tagline"><span class="text-accent">Projekcia</span><span class="text-energy-accent">Energetika budov</span></span>
-      </p>
-
-      <p
-        class="hero__rise inline-flex items-center gap-3 whitespace-nowrap text-[0.7rem] font-medium uppercase tracking-eyebrow text-white/80 sm:text-xs"
-        style="--i: 1"
-      >
-        <span class="hidden h-px w-10 bg-accent/80 sm:block" aria-hidden="true"></span>
-        {hero_.eyebrow}
-        <span class="hidden h-px w-10 bg-accent/80 sm:block" aria-hidden="true"></span>
-      </p>
-
-      <h1
-        id="hero-title"
-        class="hero__rise mx-auto max-w-3xl text-balance text-3xl leading-[1.12] sm:text-4xl md:text-5xl lg:text-6xl"
-        style="--i: 2"
-      >
-        {hero_.title}
-      </h1>
-
-      {
-        hero_.text && (
-          <p
-            class="hero__rise mx-auto max-w-2xl text-balance text-base leading-7 text-white/85 sm:text-lg sm:leading-8"
-            style="--i: 3"
-          >
-            {hero_.text}
-          </p>
-        )
-      }
-
-      <div
-        class="hero__rise flex w-full flex-col items-stretch justify-center gap-3 pt-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 lg:pt-8"
-        style="--i: 4"
-      >
-        <Button
-          as="a"
-          href={withBase(hero_.primaryCta.href)}
-          variant="hero-primary"
-          size="lg"
-          fullWidth
-          rel={undefined}
-          class="justify-center sm:min-w-[220px]"
-        >
-          {hero_.primaryCta.label}
-        </Button>
-        <Button
-          as="a"
-          href={withBase(hero_.secondaryCta.href)}
-          variant="hero-outline"
-          size="lg"
-          fullWidth
-          rel={undefined}
-          class="justify-center sm:min-w-[220px]"
-        >
-          {hero_.secondaryCta.label}
-        </Button>
+    <div class="sheet__inner">
+      <div class="sheet__text">
+        <p class="hero__eyebrow">{hero.eyebrow}</p>
+        <h1 id="hero-title" class="hero__title">{hero.title}</h1>
+        {hero.text && <p class="hero__lead">{hero.text}</p>}
+        <div class="hero__actions">
+          <Button as="a" href={withBase(hero.primaryCta.href)} variant="primary" size="lg" fullWidth rel={undefined}>
+            {hero.primaryCta.label}
+            <Icon name="arrow-right" class="h-5 w-5" />
+          </Button>
+          <Button as="a" href={withBase(hero.secondaryCta.href)} variant="outline" size="lg" fullWidth rel={undefined}>
+            {hero.secondaryCta.label}
+          </Button>
+        </div>
       </div>
-    </div>
 
-    <a
-      href="#obsah"
-      class="hero__cue absolute bottom-6 left-1/2 inline-flex min-h-11 min-w-11 -translate-x-1/2 flex-col items-center justify-center gap-1 rounded-full text-[0.7rem] uppercase tracking-eyebrow text-white/70 no-underline transition-colors duration-fast hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-    >
-      <span>Viac<span class="sr-only"> – prejsť na obsah</span></span>
-      <span aria-hidden="true"><Icon name="chevron-down" class="h-5 w-5" /></span>
-    </a>
+      <div class="sheet__axis" aria-hidden="true"><span class="sheet__node"></span></div>
+
+      <div class="sheet__drawing">
+        <HeroDrawing />
+      </div>
+
+      <!-- small title block: the promises as a parts list (Sutnar) -->
+      <dl class="stamp tabular">
+        <div class="stamp__cell stamp__cell--wide"><dt>Výkres</dt><dd>{sheet.number} · rez domu</dd></div>
+        <div class="stamp__cell"><dt>Oprávnenie</dt><dd class="text-energy">{site.credentials.oso}</dd></div>
+        <div class="stamp__cell"><dt>Presnosť ceny</dt><dd>±{site.pricing.accuracy} %</dd></div>
+        <div class="stamp__cell"><dt>Odpoveď</dt><dd>do 24 h</dd></div>
+        <div class="stamp__cell"><dt>Cieľ</dt><dd class="text-energy">A0</dd></div>
+      </dl>
+    </div>
   </div>
 </section>
 
 <style>
-  /* Business-card wordmark: bold AM + light pro.SK, tagline in the two
-     brand colours (blue = projekcia, green = energetika). */
-  .hero__brand {
+  .hero {
+    --frame: 1.75rem;
+    position: relative;
+    padding: clamp(0.75rem, 2vw, 1.5rem) clamp(0.5rem, 2vw, 2rem) clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  /* The sheet: outer trim line + inner frame, coordinates in the margin. */
+  .sheet {
+    position: relative;
+    padding: var(--frame);
+    border: 1px solid var(--color-border-strong);
+    background: color-mix(in oklch, var(--color-background) 88%, var(--color-surface-elevated));
+  }
+
+  .sheet__inner {
+    position: relative;
     display: grid;
-    justify-items: center;
-    gap: 0.35rem;
-    margin: 0;
-    text-shadow: 0 6px 24px rgb(0 0 0 / 0.35);
+    gap: 2.5rem;
+    padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 3vw, 3rem) 0;
+    border: 2px solid var(--color-line);
+    min-height: min(46rem, calc(100svh - var(--header-height) - 4rem));
   }
 
-  .hero__wordmark {
-    font-size: clamp(2.5rem, 7vw, 3.75rem);
-    font-weight: 300;
-    letter-spacing: -0.035em;
-    line-height: 1;
+  @media (min-width: 64rem) {
+    .sheet__inner {
+      grid-template-columns: 50fr 2px 50fr;
+      grid-template-rows: 1fr auto;
+      column-gap: 0;
+      align-items: center;
+      padding-bottom: 0;
+    }
+
+    .sheet__text {
+      padding-inline-end: clamp(2rem, 3.5vw, 3.5rem);
+    }
+
+    .sheet__drawing {
+      grid-column: 3;
+      grid-row: 1 / span 2;
+      align-self: center;
+      padding-inline-start: clamp(1rem, 2vw, 2rem);
+    }
+
+    .stamp {
+      grid-column: 1;
+      grid-row: 2;
+    }
   }
 
-  .hero__wordmark strong {
-    font-weight: 700;
+  @media (min-width: 80rem) {
+    .sheet__inner {
+      grid-template-columns: 45fr 2px 55fr;
+    }
   }
 
-  .hero__tagline {
+  .coords {
+    position: absolute;
     display: flex;
-    gap: 1.25rem;
-    font-size: clamp(0.6875rem, 1.6vw, 0.8125rem);
-    font-weight: 500;
-    letter-spacing: 0.22em;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
+  }
+
+  .coords li {
+    display: grid;
+    place-items: center;
+    flex: 1;
+  }
+
+  .coords--top {
+    inset: 0 var(--frame) auto;
+    height: var(--frame);
+  }
+
+  .coords--top li + li {
+    border-left: 1px solid var(--color-border-strong);
+  }
+
+  .coords--left {
+    inset: var(--frame) auto var(--frame) 0;
+    flex-direction: column;
+    width: var(--frame);
+  }
+
+  .coords--left li + li {
+    border-top: 1px solid var(--color-border-strong);
+  }
+
+  .hero__eyebrow {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
+    color: var(--color-primary);
   }
 
-  /* Layered radial overlay with color-mix() – Tailwind can't express it. */
-  .hero__overlay {
-    background:
-      /* brand glow – fixed value: the hero stays dark in both themes */
-      radial-gradient(
-        ellipse 75% 60% at 50% 0%,
-        oklch(0.5 0.1 250 / 0.3),
-        transparent 72%
-      ),
-      radial-gradient(
-        ellipse 50% 45% at 100% 100%,
-        oklch(0.55 0.09 165 / 0.18),
-        transparent 72%
-      ),
-      radial-gradient(
-        ellipse at center,
-        color-mix(in oklch, var(--color-ink-deep) 58%, transparent) 0%,
-        color-mix(in oklch, var(--color-ink-deep) 76%, transparent) 55%,
-        color-mix(in oklch, var(--color-ink-deep) 90%, transparent) 100%
+  .hero__title {
+    margin: 1rem 0 0;
+    max-width: 14ch;
+    font-size: clamp(2.375rem, 1.1rem + 4.6vw, 5rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+    color: var(--color-foreground);
+  }
+
+  .hero__lead {
+    margin: 1.5rem 0 0;
+    max-width: 52ch;
+    font-size: clamp(1rem, 0.95rem + 0.3vw, 1.125rem);
+    line-height: 1.7;
+    text-wrap: pretty;
+    color: var(--color-muted);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  @media (min-width: 40rem) {
+    .hero__actions {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+
+  .sheet__drawing {
+    width: 100%;
+    max-width: 44rem;
+    justify-self: center;
+  }
+
+  /* Corner title block, drawn like the real one: ruled cells. */
+  .stamp {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0 calc(-1 * clamp(1rem, 3vw, 3rem)) 0;
+    border-top: 2px solid var(--color-line);
+  }
+
+  @media (min-width: 40rem) {
+    .stamp {
+      grid-template-columns: 1.4fr repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .stamp {
+      margin-inline: calc(-1 * clamp(1rem, 3vw, 3rem)) 0;
+      margin-top: 2.5rem;
+      border-right: 2px solid var(--color-line);
+    }
+  }
+
+  .stamp__cell {
+    padding: 0.625rem 0.875rem;
+    border-right: 1px solid var(--color-border-strong);
+    border-bottom: 1px solid var(--color-border-strong);
+  }
+
+  .stamp__cell--wide {
+    grid-column: 1 / -1;
+  }
+
+  @media (min-width: 40rem) {
+    .stamp__cell {
+      border-bottom: 0;
+    }
+
+    .stamp__cell--wide {
+      grid-column: auto;
+    }
+
+    .stamp__cell:last-child {
+      border-right: 0;
+    }
+  }
+
+  .stamp dt {
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .stamp dd {
+    margin: 0.2rem 0 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+
+  .stamp dd.text-energy {
+    color: var(--color-energy);
+  }
+
+  /* The card's axes inside the sheet: blue dashed vertical on the split, green
+     dashed horizontal across the whole sheet, one node where they cross. */
+  .sheet__axis {
+    display: none;
+  }
+
+  @media (min-width: 64rem) {
+    .sheet__axis {
+      display: block;
+      position: relative;
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      align-self: stretch;
+      margin-top: calc(-1 * clamp(1.5rem, 4vw, 3.5rem));
+      background: repeating-linear-gradient(
+          to bottom,
+          var(--color-primary) 0 14px,
+          transparent 14px 20px,
+          var(--color-primary) 20px 23px,
+          transparent 23px 29px
+        )
+        center / 1.5px 100% no-repeat;
+    }
+
+    .sheet__axis::after {
+      content: "";
+      position: absolute;
+      top: 72%;
+      left: -100vw;
+      width: 200vw;
+      height: 1.5px;
+      background: repeating-linear-gradient(
+        to right,
+        var(--color-energy) 0 14px,
+        transparent 14px 20px,
+        var(--color-energy) 20px 23px,
+        transparent 23px 29px
       );
+    }
+
+    .sheet__node {
+      position: absolute;
+      top: 72%;
+      left: 50%;
+      z-index: 1;
+      width: 0.875rem;
+      aspect-ratio: 1;
+      background: var(--color-foreground);
+      translate: -50% -50%;
+    }
   }
 
-  /* Staggered entrance; final state is the default, so content is always
-     readable without motion or JS. */
+  .sheet {
+    overflow: clip;
+  }
+
+  @media (forced-colors: active) {
+    .sheet__axis,
+    .sheet__axis::after {
+      background: CanvasText;
+    }
+  }
+
+  /* Coordinates, title block and axis settle in after the drawing starts;
+     text is never animated (readable from the first frame, LCP).*/
   @media (prefers-reduced-motion: no-preference) {
-    .hero__rise {
-      animation: hero-rise 900ms var(--ease-out-soft) both;
-      animation-delay: calc(var(--i, 0) * 110ms + 120ms);
-    }
-
-    .hero__cue {
-      animation: hero-cue 2.4s var(--ease-standard) 1.8s 3;
+    .coords,
+    .stamp,
+    .sheet__axis {
+      animation: settle var(--duration-label) var(--ease-settle) 600ms both;
     }
   }
 
-  @keyframes hero-rise {
+  @keyframes settle {
     from {
       opacity: 0;
-      transform: translateY(1rem);
-    }
-  }
-
-  /* Vertical bob only: the horizontal centring comes from Tailwind's
-     -translate-x-1/2 (the `translate` property), which `transform` adds to. */
-  @keyframes hero-cue {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(0.35rem);
     }
   }
 </style>

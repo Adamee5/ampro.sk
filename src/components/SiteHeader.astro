@@ -1,5 +1,5 @@
 ---
-import { site } from "@/data/site";
+import { site, sheetFor } from "@/data/site";
 import { withBase } from "@/lib/navigation";
 import MobileMenu from "./MobileMenu.astro";
 import ThemeToggle from "./ThemeToggle.astro";
@@ -9,6 +9,7 @@ export interface Props {
 }
 
 const { pathname } = Astro.props;
+const sheet = sheetFor(pathname);
 const activePath =
   pathname === "/" ? "/" : pathname.endsWith("/") ? pathname : `${pathname}/`;
 ---
@@ -39,6 +40,9 @@ const activePath =
         <span class="sr-only"> – úvodná stránka</span>
       </span>
     </a>
+    <p class="hidden border-l border-border-strong pl-4 text-xs font-semibold uppercase tracking-wide text-muted tabular lg:block">
+      <span class="sr-only">Výkres </span>{sheet.number}
+    </p>
 
     <nav class="ml-auto hidden items-center gap-6 xl:flex xl:gap-7" aria-label="Hlavná navigácia">
       {

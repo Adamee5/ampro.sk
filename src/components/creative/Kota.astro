@@ -1,0 +1,135 @@
+---
+/**
+ * Kóta – an architectural dimension line carrying a real value (signature 2,
+ * docs/creative/experience.md). Two 45° ticks, a line between them and the
+ * value as plain text sitting on the line. As it scrolls into view the line
+ * is pulled from both ends to the middle (scroll-driven, CSS only); without
+ * scroll timelines or with reduced motion it is simply finished.
+ */
+export interface Props {
+  value: string;
+  /** Small text after the value, e.g. "±15 %". */
+  note?: string;
+  tone?: "design" | "energy" | "line";
+  class?: string;
+}
+
+const { value, note, tone = "design", class: className } = Astro.props;
+---
+
+<p class:list={["kota tabular", `kota--${tone}`, className]}>
+  <span class="kota__value">{value}{note && <small>{note}</small>}</span>
+</p>
+
+<style>
+  .kota {
+    --kota-color: var(--color-primary);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 2rem;
+    margin: 0;
+    padding-inline: 0.75rem;
+    color: var(--kota-color);
+    /* the dimension line itself */
+    background: linear-gradient(currentColor, currentColor) center / 100% 1.5px no-repeat;
+  }
+
+  .kota--energy {
+    --kota-color: var(--color-energy);
+  }
+
+  .kota--line {
+    --kota-color: var(--color-line);
+  }
+
+  /* 45° architectural ticks at both ends + short extension lines. */
+  .kota::before,
+  .kota::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 1.5px;
+    height: 1.25rem;
+    background: currentColor;
+    translate: 0 -50%;
+  }
+
+  .kota::before {
+    left: 0;
+    rotate: 45deg;
+  }
+
+  .kota::after {
+    right: 0;
+    rotate: 45deg;
+  }
+
+  .kota__value {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4em;
+    padding: 0.15rem 0.6rem;
+    background: var(--kota-bg, var(--color-background));
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1.3;
+    text-align: center;
+    color: var(--color-foreground);
+  }
+
+  .kota__value small {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--kota-color);
+  }
+
+  @media (forced-colors: active) {
+    .kota {
+      color: CanvasText;
+      background: linear-gradient(CanvasText, CanvasText) center / 100% 1.5px no-repeat;
+    }
+  }
+
+  /* Pulled from both ends to the middle while entering the viewport.
+     Longhands on purpose: the minifier would fold a timeline into the
+     shorthand, which Chromium drops (creative-dev non-negotiables). */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .kota {
+        animation-name: kota-draw;
+        animation-duration: 1ms;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range-start: entry 10%;
+        animation-range-end: entry 60%;
+      }
+
+      .kota::before,
+      .kota::after {
+        animation-name: kota-tick;
+        animation-duration: 1ms;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range-start: entry 0%;
+        animation-range-end: entry 20%;
+      }
+    }
+  }
+
+  @keyframes kota-draw {
+    from {
+      background-size: 0% 1.5px;
+    }
+  }
+
+  @keyframes kota-tick {
+    from {
+      opacity: 0;
+    }
+  }
+</style>

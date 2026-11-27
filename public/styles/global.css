@@ -5,6 +5,16 @@
     --header-height: 4.625rem;
   }
 
+  /* Native controls (radios, checkboxes, scrollbars) follow the site theme,
+     not the OS theme. */
+  :root {
+    color-scheme: light;
+  }
+
+  [data-theme="dark"] {
+    color-scheme: dark;
+  }
+
   html {
     /* Every in-page jump (#faq, #project, "Více") lands below the sticky
        header with breathing room, eyebrow included – no per-element margins. */
@@ -16,30 +26,41 @@
     scrollbar-gutter: stable;
   }
 
+  /* "Výkres": the page grid is drawn as hairlines (Müller-Brockmann – the
+     grid made visible). 4 columns on phones, 12 from 64rem, max 80rem wide,
+     centred like the content. Decoration only, behind everything. */
   body {
+    --grid-cols: 4;
+    --grid-max: 80rem;
+    --grid-pad: 1rem;
     min-height: 100vh;
-    background:
-      radial-gradient(
-        circle at top,
-        color-mix(in oklch, var(--color-accent) 12%, transparent),
-        transparent 28%
-      ),
-      var(--color-background);
+    background-color: var(--color-background);
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--color-grid) 0 1px,
+      transparent 1px calc((min(100vw, var(--grid-max)) - 2 * var(--grid-pad)) / var(--grid-cols))
+    );
+    background-position: max(var(--grid-pad), calc((100vw - var(--grid-max)) / 2 + var(--grid-pad))) 0;
+    background-size: calc(min(100vw, var(--grid-max)) - 2 * var(--grid-pad) + 1px) 100%;
+    background-repeat: no-repeat;
   }
 
-  [data-theme="dark"] body {
-    background:
-      radial-gradient(
-        circle at top,
-        color-mix(in oklch, var(--color-accent) 14%, transparent),
-        transparent 24%
-      ),
-      radial-gradient(
-        circle at bottom left,
-        color-mix(in oklch, var(--color-white) 4%, transparent),
-        transparent 22%
-      ),
-      var(--color-background);
+  @media (min-width: 40rem) {
+    body {
+      --grid-pad: 1.5rem;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    body {
+      --grid-cols: 12;
+      --grid-pad: 2rem;
+    }
+  }
+
+  /* Numbers line up like a parts list (Sutnar). */
+  .tabular {
+    font-variant-numeric: tabular-nums lining-nums;
   }
 
   body[data-scroll-lock] {

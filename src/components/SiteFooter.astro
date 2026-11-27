@@ -1,73 +1,180 @@
 ---
-import { site, telHref } from "@/data/site";
+/**
+ * Footer as the drawing's title block (rohová pečiatka) – docs/creative/brief.md,
+ * rule 3 inverted: authority is a stamp with a number, not "X rokov skúseností".
+ * A real <dl> table, readable as text; the frame is CSS.
+ */
+import { site, sheetFor, telHref } from "@/data/site";
 import { withBase } from "@/lib/navigation";
 import SocialLinks from "./SocialLinks.astro";
 
+const sheet = sheetFor(Astro.url.pathname);
+const person = site.company.contacts[0];
 const hasSocial = Object.values(site.social).some(Boolean);
+const date = new Date().toLocaleDateString("sk-SK", { month: "2-digit", year: "numeric" }).replace(/\s/g, "");
 ---
 
-<!-- Always dark: use text-accent (light tint) here, not text-primary. -->
-<footer
-  class="border-t border-white/10 bg-footer-bg py-10 text-footer-text sm:py-12"
-  aria-labelledby="site-footer-heading"
->
-  <h2 id="site-footer-heading" class="sr-only">Päta stránky</h2>
-  <div class="mx-auto grid max-w-7xl gap-8 px-4 sm:grid-cols-2 sm:px-6 md:grid-cols-[1.2fr_1fr_1fr] md:items-start lg:px-8">
-    <div class="space-y-2 sm:col-span-2 md:col-span-1">
-      <p class="text-2xl font-light tracking-tight text-white"><strong class="font-bold">AM</strong>pro.SK</p>
-      <p class="text-sm uppercase tracking-wide"><span class="text-accent">Projekcia</span> · <span class="text-energy-accent">Energetika budov</span></p>
-      <p class="text-sm leading-6">{site.credentials.osoText}, <span class="text-white">{site.credentials.oso}</span></p>
-    </div>
+<footer class="footer" aria-labelledby="site-footer-heading">
+  <h2 id="site-footer-heading" class="sr-only">Päta stránky – údaje o firme</h2>
+  <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+    <div class="block">
+      <div class="block__brand">
+        <p class="block__wordmark"><strong>AM</strong>pro.SK</p>
+        <p class="block__tagline"><span class="text-accent">Projekcia</span> · <span class="text-energy-accent">Energetika budov</span></p>
+      </div>
 
-    <div class="space-y-1">
-      <p class="text-xs uppercase tracking-eyebrow text-footer-text/70">Kontakt</p>
-      {site.company.contacts.map((person) => (
-        <>
-          <a href={telHref(person.phone)} class="flex min-h-6 items-center py-1 text-sm text-white hover:underline">{person.phone}</a>
-          <a href={`mailto:${person.email}`} class="flex min-h-6 items-center py-1 text-sm text-white hover:underline">{person.email}</a>
-        </>
-      ))}
-      <p class="pt-2 text-sm leading-6">{site.company.address}</p>
-      <a
-        href={withBase("/kontakt/")}
-        class="inline-flex min-h-6 items-center py-1 text-sm text-accent hover:underline"
-        aria-label="Prejsť na kontaktnú stránku"
-      >
-        Kontakt &rarr;
-      </a>
-    </div>
-
-    {
-      hasSocial && (
-        <div class="space-y-3 md:text-right">
-          <p class="text-xs uppercase tracking-eyebrow text-footer-text/70">Sledujte nás</p>
-          <SocialLinks
-            variant="card"
-            align="left"
-            class="md:justify-end [&_a]:border-white/20 [&_a]:text-white [&_a:hover]:border-primary [&_a:focus-visible]:border-primary"
-          />
+      <dl class="block__cells tabular">
+        <div class="cell">
+          <dt>Projektant</dt>
+          <dd>{person?.name}</dd>
         </div>
-      )
-    }
-  </div>
+        <div class="cell">
+          <dt>Oprávnenie</dt>
+          <dd class="text-energy-accent">
+            <a href={site.credentials.registerUrl} target="_blank" rel="noopener">{site.credentials.oso}<span class="sr-only"> – overiť v registri SKSI (otvorí sa v novom okne)</span></a>
+          </dd>
+        </div>
+        <div class="cell">
+          <dt>Kontakt</dt>
+          <dd>
+            {person && <a href={telHref(person.phone)}>{person.phone}</a>}
+            {person && <a href={`mailto:${person.email}`}>{person.email}</a>}
+          </dd>
+        </div>
+        <div class="cell">
+          <dt>Sídlo</dt>
+          <dd>{site.company.address}</dd>
+        </div>
+        <div class="cell">
+          <dt>Firma</dt>
+          <dd>{site.company.legalName} · IČO {site.company.ico}</dd>
+        </div>
+        <div class="cell cell--sheet">
+          <dt>Výkres</dt>
+          <dd>{sheet.number} · {sheet.title}</dd>
+        </div>
+        <div class="cell">
+          <dt>Mierka · dátum</dt>
+          <dd>1:100 · {date}</dd>
+        </div>
+        <div class="cell">
+          <dt>Odpoveď</dt>
+          <dd><a href={withBase("/kontakt/#dopyt")}>do 24 h →</a></dd>
+        </div>
+      </dl>
+    </div>
 
-  <div class="mx-auto mt-8 grid max-w-7xl gap-3 border-t border-white/10 px-4 pt-6 text-xs sm:mt-10 sm:grid-cols-[1fr_auto] sm:items-baseline sm:gap-6 sm:px-6 lg:px-8">
-    <p class="leading-6">
-      <span class="block sm:inline">Prevádzkovateľ: <span class="text-white">{site.company.legalName}</span></span>
-      {
-        site.company.ico && (
-          <>
-            <span class="hidden sm:inline"> · </span>
-            <span class="block sm:inline">IČO: <span class="text-white">{site.company.ico}</span></span>
-          </>
-        )
-      }
-    </p>
-    <p class="leading-6 sm:text-right">
-      <span class="block">© {new Date().getFullYear()} {site.name}. Všetky práva vyhradené.</span>
-      <span class="block">
-        Created by{" "}<a href="https://lukaschylik.dev/" class="text-white underline decoration-white/30 underline-offset-4 transition-colors duration-fast hover:decoration-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Lukáš Chylík</a>
-      </span>
-    </p>
+    <div class="mt-6 flex flex-col gap-4 text-xs sm:flex-row sm:items-center sm:justify-between">
+      <p class="leading-6">© {new Date().getFullYear()} {site.company.legalName}. Všetky práva vyhradené.</p>
+      {hasSocial && <SocialLinks variant="card" align="left" class="[&_a]:border-white/20 [&_a]:text-white" />}
+      <p class="leading-6">
+        Created by{" "}<a href="https://lukaschylik.dev/" class="text-white underline decoration-white/30 underline-offset-4 hover:decoration-white">Lukáš Chylík</a>
+      </p>
+    </div>
   </div>
 </footer>
+
+<style>
+  .footer {
+    background: var(--color-footer-bg);
+    color: var(--color-footer-text);
+  }
+
+  .block {
+    display: grid;
+    border: 1.5px solid oklch(1 0 0 / 0.55);
+  }
+
+  @media (min-width: 64rem) {
+    .block {
+      grid-template-columns: 0.9fr 2.1fr;
+    }
+  }
+
+  .block__brand {
+    display: grid;
+    align-content: center;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    border-bottom: 1px solid oklch(1 0 0 / 0.25);
+  }
+
+  @media (min-width: 64rem) {
+    .block__brand {
+      border-bottom: 0;
+      border-right: 1px solid oklch(1 0 0 / 0.25);
+    }
+  }
+
+  .block__wordmark {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 300;
+    letter-spacing: -0.035em;
+    line-height: 1;
+    color: oklch(0.98 0 0);
+  }
+
+  .block__wordmark strong {
+    font-weight: 700;
+  }
+
+  .block__tagline {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .block__cells {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    margin: 0;
+  }
+
+  .cell {
+    padding: 0.875rem 1rem;
+    border-right: 1px solid oklch(1 0 0 / 0.18);
+    border-bottom: 1px solid oklch(1 0 0 / 0.18);
+  }
+
+  .cell dt {
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: oklch(0.8 0 0 / 0.85);
+  }
+
+  .cell dd {
+    display: grid;
+    margin: 0.3rem 0 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: oklch(0.97 0 0);
+  }
+
+  .cell a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.5rem;
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: oklch(1 0 0 / 0.3);
+    text-underline-offset: 3px;
+    word-break: break-word;
+  }
+
+  .cell a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .cell--sheet dd {
+    font-weight: 600;
+  }
+
+  .cell :global(.text-energy-accent) a {
+    color: var(--color-energy-accent);
+  }
+</style>

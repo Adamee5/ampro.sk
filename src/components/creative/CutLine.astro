@@ -1,0 +1,98 @@
+---
+/**
+ * Section cut (rezová čiara) between sheets of the page: a dash-dot line
+ * across the content width with an icon bubble and a view arrow at both
+ * ends – as on a floor plan, with a thematic icon instead of a letter.
+ * Decoration only (aria-hidden); the section's own h2 carries the meaning.
+ */
+import DrawIcon from "./DrawIcon.astro";
+
+export interface Props {
+  icon: string;
+  tone?: "design" | "energy";
+}
+
+const { icon, tone = "design" } = Astro.props;
+---
+
+<div class:list={["cut mx-auto max-w-7xl px-4 sm:px-6 lg:px-8", `cut--${tone}`]} aria-hidden="true">
+  <span class="cut__mark"><DrawIcon name={icon} class="h-5 w-5" /></span>
+  <span class="cut__line"></span>
+  <span class="cut__mark cut__mark--end"><DrawIcon name={icon} class="h-5 w-5" /></span>
+</div>
+
+<style>
+  .cut {
+    --cut-color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--cut-color);
+  }
+
+  .cut--energy {
+    --cut-color: var(--color-energy);
+  }
+
+  .cut__mark {
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2.5rem;
+    aspect-ratio: 1;
+    border: 1.5px solid currentColor;
+    border-radius: 50%;
+    background: var(--color-background);
+  }
+
+  /* the view arrow under the bubble, pointing along the cut */
+  .cut__mark::after {
+    content: "";
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 50%;
+    border: 6px solid transparent;
+    border-top: 9px solid currentColor;
+    translate: -50% 0;
+  }
+
+  .cut__line {
+    flex: 1;
+    height: 2px;
+    background: repeating-linear-gradient(
+      to right,
+      currentColor 0 18px,
+      transparent 18px 24px,
+      currentColor 24px 27px,
+      transparent 27px 33px
+    );
+  }
+
+  @media (forced-colors: active) {
+    .cut {
+      color: CanvasText;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .cut__line {
+        transform-origin: left;
+        animation-name: cut-draw;
+        animation-duration: 1ms;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range-start: entry 0%;
+        animation-range-end: entry 80%;
+      }
+    }
+  }
+
+  @keyframes cut-draw {
+    from {
+      scale: 0 1;
+    }
+  }
+</style>

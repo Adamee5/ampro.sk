@@ -5,6 +5,7 @@ import SiteFooter from "@/components/SiteFooter.astro";
 import SectionIntro from "@/components/SectionIntro.astro";
 import InquiryForm from "@/components/InquiryForm.astro";
 import Icon from "@/components/ui/Icon.astro";
+import DrawIcon from "@/components/creative/DrawIcon.astro";
 import { site } from "@/data/site";
 
 const page = site.b2b;
@@ -30,7 +31,7 @@ const page = site.b2b;
         page.services.map((service, index) => (
           <li class="flex h-full flex-col rounded-2xl border border-border bg-surface p-7" data-reveal style={`--reveal-i: ${index}`}>
             <span class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <Icon name={service.icon} class="h-6 w-6" />
+              <DrawIcon name={service.icon} class="h-6 w-6" />
             </span>
             <h2 class="mt-5 text-xl text-foreground">{service.title}</h2>
             <p class="mt-3 leading-7 text-muted">{service.text}</p>

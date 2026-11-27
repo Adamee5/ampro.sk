@@ -3,7 +3,9 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import SiteHeader from "@/components/SiteHeader.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
 import SectionIntro from "@/components/SectionIntro.astro";
+import FlowSteps from "@/components/FlowSteps.astro";
 import Icon from "@/components/ui/Icon.astro";
+import DrawIcon from "@/components/creative/DrawIcon.astro";
 import { site } from "@/data/site";
 import { withBase } from "@/lib/navigation";
 
@@ -22,13 +24,16 @@ const page = site.guide;
 >
   <SiteHeader pathname={Astro.url.pathname} />
   <main id="main" class="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-    <SectionIntro level={1} eyebrow="Sprievodca" title={page.title} text={page.text} />
+    <FlowSteps current={1} />
+    <div class="mt-10 sm:mt-12">
+      <SectionIntro level={1} eyebrow="Krok 1 – Sprievodca" title={page.title} text={page.text} />
+    </div>
 
     <form class="guide mt-10 grid gap-5 sm:mt-12" data-guide aria-label="Otázky sprievodcu">
       {page.questions.map((question, index) => (
-        <fieldset class="guide__question" data-reveal="fade">
+        <fieldset class="guide__question">
           <legend class="guide__legend">
-            <span class="guide__number">{index + 1}/{page.questions.length}</span>
+            <span class="guide__number"><span class="guide__icon"><DrawIcon name={question.icon ?? "am-kruzidlo"} class="h-5 w-5" /></span>Otázka {index + 1} z {page.questions.length}</span>
             {question.question}
           </legend>
           <div class="guide__options">
@@ -49,7 +54,7 @@ const page = site.guide;
         <ol class="guide__steps" data-result-steps></ol>
         <div class="mt-6 flex flex-col gap-3 sm:flex-row" data-result-actions>
           <a class="guide__primary" href={withBase("/konfigurator/")} data-result-link>
-            <span data-result-link-label>Pozrieť orientačnú cenu</span>
+            <span data-result-link-label>Krok 2: pozrieť orientačnú cenu</span>
             <Icon name="arrow-right" variant="mini" class="h-5 w-5" />
           </a>
           <a class="guide__secondary" href={withBase("/kontakt/#dopyt")}>Radšej sa mi ozvite</a>
@@ -88,8 +93,19 @@ const page = site.guide;
     clear: both;
   }
 
+  .guide__icon {
+    display: inline-grid;
+    place-items: center;
+    width: 2.25rem;
+    aspect-ratio: 1;
+    border: 1.5px solid var(--color-primary);
+    border-radius: 50%;
+  }
+
   .guide__number {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
     margin-bottom: calc(var(--spacing) * 1);
     font-size: 0.75rem;
     font-weight: 600;
@@ -138,14 +154,11 @@ const page = site.guide;
 
   .guide__option input {
     flex: none;
-    width: 1.125rem;
-    height: 1.125rem;
+    width: 1.5rem;
+    height: 1.5rem;
     accent-color: var(--color-primary);
   }
 
-  .guide__option input:focus-visible {
-    outline: none;
-  }
 
   .guide__result {
     margin-top: calc(var(--spacing) * 4);
@@ -253,7 +266,7 @@ const page = site.guide;
 
     const list: string[] = [];
     let href = `${base}/konfigurator/`;
-    let label = "Pozrieť orientačnú cenu";
+    let label = "Krok 2: pozrieť orientačnú cenu";
 
     if (plan === "cert") {
       title.textContent = "Stačí vám energetický certifikát";

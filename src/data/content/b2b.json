@@ -19,12 +19,12 @@
       "text": "Podklady pre CNC opracovanie dreva a ďalších prvkov priamo z modelu, bez prekresľovania."
     },
     {
-      "icon": "scissors",
+      "icon": "am-narez",
       "title": "Nárezové plány",
       "text": "Optimalizované nárezy dosiek a prvkov – menej odpadu, presnejšia objednávka materiálu."
     },
     {
-      "icon": "cube",
+      "icon": "am-bim",
       "title": "BIM modelovanie",
       "text": "Vymodelujeme stavbu podľa vašich výkresov – pre koordináciu, výkazy výmer alebo prezentáciu klientovi."
     }

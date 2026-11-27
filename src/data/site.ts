@@ -116,6 +116,22 @@ export type SiteData = typeof site;
 /** `+421 910 000 000` → `tel:+421910000000` */
 export const telHref = (phone: string) => `tel:${phone.replace(/\s+/g, "")}`;
 
+/** "Výkres": every page is a sheet of one drawing set (title block, header). */
+const SHEETS: Record<string, { number: string; title: string }> = {
+  "/": { number: "AM-01", title: "Úvod" },
+  "/sprievodca/": { number: "AM-02", title: "Sprievodca" },
+  "/konfigurator/": { number: "AM-03", title: "Cena projektu" },
+  "/energeticky-certifikat/": { number: "AM-04", title: "Energetický certifikát" },
+  "/pre-firmy/": { number: "AM-05", title: "Pre firmy" },
+  "/referencie/": { number: "AM-06", title: "Referencie" },
+  "/kontakt/": { number: "AM-07", title: "Kontakt" },
+};
+
+export const sheetFor = (pathname: string) => {
+  const path = pathname.endsWith("/") ? pathname : `${pathname}/`;
+  return SHEETS[path] ?? { number: "AM-00", title: "Príloha" };
+};
+
 /** 1234.5 → "1 235 €" (Slovak grouping, whole euros). */
 export const formatEuro = (value: number) =>
   `${Math.round(value).toLocaleString("sk-SK").replace(/ /g, " ")} €`;

@@ -2,10 +2,14 @@
   "seo": {
     "title": "Projekt rodinného domu a energetika budov – Žilina",
     "description": "Projekt RD, ktorý spĺňa A0 už na papieri. BIM model, stavebný zámer, projekt stavby, PEH aj energetický certifikát z jednej ruky. Orientačná cena online.",
-    "keywords": ["projektant rodinných domov Žilina", "projekt domu A0", "konfigurátor ceny projektu"]
+    "keywords": [
+      "projektant rodinných domov Žilina",
+      "projekt domu A0",
+      "konfigurátor ceny projektu"
+    ]
   },
   "hero": {
-    "eyebrow": "BIM · A0 · Žilina a celé Slovensko",
+    "eyebrow": "Výkres AM-01 · Žilina a celé Slovensko",
     "title": "Projekt domu, ktorý spĺňa A0 už na papieri.",
     "text": "Navrhneme váš dom v BIM, prepočítame jeho energetiku a vybavíme certifikát ku kolaudácii. Projektant a energetik OSO č. 418 v jednej osobe – nemusíte hľadať nikoho ďalšieho.",
     "image": "/gallery/web/hero",
@@ -29,7 +33,8 @@
         "title": "Sprievodca v 5 otázkach",
         "text": "Máte pozemok alebo len nápad? Odpovedzte na pár otázok a odporučíme vám postup, rozsah projektu aj ďalší krok.",
         "cta": "Spustiť sprievodcu",
-        "href": "/sprievodca/"
+        "href": "/sprievodca/",
+        "icon": "am-kruzidlo"
       },
       {
         "tone": "energy",
@@ -37,7 +42,8 @@
         "title": "Konfigurátor ceny projektu",
         "text": "Vyklikajte si stupeň dokumentácie, plochu, profesie a prípojky. Orientačnú cenu (±15 %) uvidíte hneď, bez zadávania kontaktu.",
         "cta": "Otvoriť konfigurátor",
-        "href": "/konfigurator/"
+        "href": "/konfigurator/",
+        "icon": "am-kalkulacka"
       }
     ],
     "links": [
@@ -73,7 +79,7 @@
         "Poradenstvo k dotáciám (Obnov dom, Zelená domácnostiam)"
       ]
     },
-    "intersection": "Jeden model, jeden človek, jedna zodpovednosť."
+    "intersection": "Jeden model. Projekcia aj energetika."
   },
   "process": {
     "eyebrow": "Postup",
@@ -81,28 +87,33 @@
     "steps": [
       {
         "title": "Úvodný hovor",
-        "time": "do 24 hodín",
-        "text": "Prejdeme pozemok, rozpočet a vaše predstavy. Poviete nám, čo už máte (geometrický plán, regulatívy obce, inšpirácie)."
+        "time": "do 24 h",
+        "text": "Prejdeme pozemok, rozpočet a vaše predstavy. Poviete nám, čo už máte (geometrický plán, regulatívy obce, inšpirácie).",
+        "icon": "phone"
       },
       {
         "title": "Návrh v BIM",
         "time": "2–4 týždne",
-        "text": "Dispozícia a vzhľad domu v 3D modeli. Pozriete si ho skôr, než sa čokoľvek nakreslí pre úrad."
+        "text": "Dispozícia a vzhľad domu v 3D modeli. Pozriete si ho skôr, než sa čokoľvek nakreslí pre úrad.",
+        "icon": "am-bim"
       },
       {
         "title": "Energetický prepočet",
-        "time": "súbežne s návrhom",
-        "text": "Overíme triedu A0 už na modeli – hrúbky izolácie, okná, tepelné čerpadlo, rekuperácia, fotovoltika."
+        "time": "súbežne",
+        "text": "Overíme triedu A0 už na modeli – hrúbky izolácie, okná, tepelné čerpadlo, rekuperácia, fotovoltika.",
+        "icon": "am-obalka"
       },
       {
         "title": "Projekt pre úrad",
         "time": "4–8 týždňov",
-        "text": "Stavebný zámer a projekt stavby so všetkými profesiami, prípojkami a PEH. Pomôžeme aj s inžinieringom."
+        "text": "Stavebný zámer a projekt stavby so všetkými profesiami, prípojkami a PEH. Pomôžeme aj s inžinieringom.",
+        "icon": "document-text"
       },
       {
         "title": "Certifikát ku kolaudácii",
-        "time": "po dokončení stavby",
-        "text": "Energetický certifikát vystavíme sami – poznáme dom od prvej čiary, takže bez zbytočného zameriavania."
+        "time": "po stavbe",
+        "text": "Energetický certifikát vystavíme sami – poznáme dom od prvej čiary, takže bez zbytočného zameriavania.",
+        "icon": "am-stitok"
       }
     ]
   },
@@ -116,7 +127,7 @@
         "text": "Oprávnenie na energetickú certifikáciu budov si overíte vo verejnom registri SKSI."
       },
       {
-        "icon": "cube",
+        "icon": "am-bim",
         "title": "Projekt v BIM",
         "text": "Dom vzniká ako 3D model – menej chýb medzi profesiami, presnejšie výkazy a rozpočet."
       },

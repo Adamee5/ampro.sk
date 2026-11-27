@@ -15,9 +15,14 @@
 
 @theme {
   /* Surfaces -------------------------------------------------- */
-  --color-background: oklch(0.985 0 0);
-  --color-surface: oklch(0.96 0.002 250);
-  --color-surface-elevated: oklch(0.995 0 0);
+  /* "Výkres": light theme is warm drawing paper, dark theme is the card. */
+  --color-background: oklch(0.975 0.006 85);
+  --color-surface: oklch(0.955 0.007 85);
+  --color-surface-elevated: oklch(0.99 0.004 85);
+  /* Drawing grid hairlines (decoration only). */
+  --color-grid: oklch(0.235 0 0 / 0.06);
+  /* Drawing line colour (pen ink) – flips to light in the dark theme. */
+  --color-line: oklch(0.235 0 0);
 
   /* Text ------------------------------------------------------ */
   --color-foreground: oklch(0.235 0 0);
@@ -100,6 +105,11 @@
   --duration-fast: 150ms;
   --duration-standard: 300ms;
   --duration-slow: 500ms;
+  /* "Výkres" motion: lines are pulled by a steady hand, never bounce. */
+  --ease-draft: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-settle: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-stroke: 800ms;
+  --duration-label: 300ms;
 
   /* Z-index (Tailwind v4 does not map --z-* to utilities: use z-[var(--z-modal)]) */
   --z-base: 1;
@@ -125,6 +135,8 @@
   --color-action-hover: oklch(0.88 0 0);
   --color-on-action: oklch(0.2 0 0);
 
+  --color-grid: oklch(1 0 0 / 0.06);
+  --color-line: oklch(0.97 0 0);
   --color-background: oklch(0.2 0 0); /* #171717 */
   --color-surface: oklch(0.235 0 0); /* #1e1e1e */
   --color-surface-elevated: oklch(0.27 0 0);

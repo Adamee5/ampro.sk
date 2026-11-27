@@ -1,4 +1,10 @@
 ---
+/**
+ * Section heading as an item of a drawing sheet: an optional thematic icon
+ * on a hairline rule, the eyebrow, the heading and the lead.
+ */
+import DrawIcon from "@/components/creative/DrawIcon.astro";
+
 export interface Props {
   eyebrow?: string;
   title: string;
@@ -7,19 +13,54 @@ export interface Props {
   headingId?: string;
   /** 1 for the page's main heading (one per page), 2 for sections. */
   level?: 1 | 2;
+  /** Thematic icon before the eyebrow (am-* or a Heroicons name). */
+  icon?: string;
 }
 
-const { eyebrow, title, text, align = "left", headingId, level = 2 } = Astro.props;
+const { eyebrow, title, text, align = "left", headingId, level = 2, icon } = Astro.props;
 const Heading = level === 1 ? "h1" : "h2";
 const centered = align === "center";
 ---
 
 <div class:list={["space-y-4", centered && "mx-auto max-w-3xl text-center"]}>
-  {eyebrow && (
-    <p class="text-sm font-medium uppercase tracking-eyebrow text-primary">
-      {eyebrow}
+  {(icon || eyebrow) && (
+    <p class:list={["intro__label", centered && "intro__label--center"]}>
+      {icon && <span class="intro__icon"><DrawIcon name={icon} class="h-5 w-5" /></span>}
+      {eyebrow && <span>{eyebrow}</span>}
     </p>
   )}
   <Heading id={headingId} class="text-balance text-2xl leading-tight text-foreground sm:text-3xl md:text-5xl">{title}</Heading>
   {text && <p class:list={["text-base leading-7 text-muted sm:text-lg sm:leading-8", !centered && "max-w-3xl"]}>{text}</p>}
 </div>
+
+<style>
+  .intro__label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+  }
+
+  .intro__label--center {
+    justify-content: center;
+  }
+
+  .intro__icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--color-foreground);
+  }
+
+  .intro__icon::after {
+    content: "";
+    width: 2.5rem;
+    height: 1px;
+    background: var(--color-border-strong);
+  }
+</style>
