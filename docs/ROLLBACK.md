@@ -41,16 +41,20 @@ Cloudflare nameservery: **arvind.ns.cloudflare.com**, **hattie.ns.cloudflare.com
 
 - OAuth App **AMpro.sk CMS** (github.com/settings/applications/4059961), homepage https://www.ampro.sk, callback https://www.ampro.sk/api/callback, tokeny bez expirácie (Decap nevie obnovovať).
 
-## Zostáva (po poradí)
+## Hotové 27. 11. 2026
 
-1. **Websupport (robí používateľ):** zmeniť nameservery domény ampro.sk na `arvind.ns.cloudflare.com` a `hattie.ns.cloudflare.com`; ak je zapnutý DNSSEC, vypnúť ho.
-2. Cloudflare → ampro.sk → Overview: „Check nameservers“ – počkať na **Active**.
-3. Pages `ampro-sk` → Custom domains: pridať `www.ampro.sk` (a `ampro.sk`).
-4. Rules → Redirect Rules: `ampro.sk` → `https://www.ampro.sk` + cesta, 301.
-5. SSL/TLS: Full (strict), Always Use HTTPS, min TLS 1.2.
-6. Resend → Domains → ampro.sk → „I've added the records“ / Verify.
-7. **Tajné kľúče (robí používateľ)** – Pages `ampro-sk` → Settings → Variables and Secrets, typ **Secret**, Production aj Preview:
+- Websupport: DNSSEC vypnutý, nameservery prepnuté na Cloudflare (register potvrdil o 14:14).
+- Zóna ampro.sk v Cloudflare je **Active**.
+- Pages `ampro-sk` → Custom domain `www.ampro.sk` pridaná.
+- Redirect Rule „ampro.sk → www.ampro.sk“: `http*://ampro.sk/*` → `https://www.ampro.sk/${2}`, 301, zachová query.
+- SSL/TLS: Full (strict), Always Use HTTPS zapnuté.
+- Resend: overenie spustené (Pending → overí sa automaticky).
+
+## Zostáva
+
+1. Skontrolovať v Resende stav **Verified**.
+2. **Tajné kľúče (robí používateľ)** – Pages `ampro-sk` → Settings → Variables and Secrets, typ **Secret**, Production aj Preview:
    - `RESEND_API_KEY` – Resend → API keys → Create (Sending access, doména ampro.sk)
    - `GITHUB_CLIENT_ID` a `GITHUB_CLIENT_SECRET` – z OAuth App AMpro.sk CMS (Generate a new client secret)
    Potom Deployments → Retry deployment.
-8. Test: formulár s prílohou (2 e-maily dorazia), prihlásenie do /admin/, e-mail na Websupporte funguje oboma smermi.
+3. Test: formulár s prílohou (2 e-maily dorazia), prihlásenie do /admin/, e-mail na Websupporte funguje oboma smermi.
