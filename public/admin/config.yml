@@ -501,6 +501,7 @@ collections:
         file: src/data/content/settings.json
         fields:
           - { name: name, label: Názov webu, widget: string }
+          - { name: headerName, label: "Názov v hlavičke (pri logu)", widget: string, required: false, hint: "Ak je prázdny, použije sa Názov webu." }
           - { name: tagline, label: Podtitul, widget: string }
           - { name: description, label: Popis firmy (vyhľadávače), widget: text }
           - { name: language, label: Jazyk webu, widget: hidden, default: sk }

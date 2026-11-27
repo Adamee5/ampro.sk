@@ -44,6 +44,8 @@ const address = `${company.street}, ${company.postalCode} ${company.city}`;
 
 export const site = {
   name: settings.name,
+  /** Name shown next to the logo in the header; falls back to `name`. */
+  headerName: settings.headerName || settings.name,
   tagline: settings.tagline,
   language: settings.language,
   siteUrl: (import.meta.env.PUBLIC_SITE_URL || import.meta.env.SITE || "https://www.ampro.sk").replace(/\/$/, ""),
