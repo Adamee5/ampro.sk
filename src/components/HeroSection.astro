@@ -13,6 +13,8 @@ import Button from "./ui/Button.astro";
 import ResponsiveImage from "./ui/ResponsiveImage.astro";
 
 const hero_ = site.home.hero;
+// Wordmark: first two letters bold (AM), the rest light – text from settings → headerName.
+const wordmark = site.headerName;
 ---
 
 <section class="relative isolate overflow-hidden bg-ink-deep" aria-labelledby="hero-title">
@@ -32,7 +34,7 @@ const hero_ = site.home.hero;
   <div class="relative mx-auto flex min-h-[88svh] max-w-4xl flex-col items-center justify-center px-4 pb-24 pt-16 text-center sm:min-h-[92svh] sm:px-6 lg:px-8">
     <div class="flex flex-col items-center gap-6 text-white sm:gap-7">
       <p class="hero__rise hero__brand" style="--i: 0">
-        <span class="hero__wordmark"><strong>AM</strong>pro.SK</span>
+        <span class="hero__wordmark"><strong>{wordmark.slice(0, 2)}</strong>{wordmark.slice(2)}</span>
         <span class="hero__tagline"><span class="text-accent">Projekcia</span><span class="text-energy-accent">Energetika budov</span></span>
       </p>
 
