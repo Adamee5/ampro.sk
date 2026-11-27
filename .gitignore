@@ -158,3 +158,6 @@ vite.config.ts.timestamp-*
 
 # Cloudflare
 .wrangler/
+
+# Creative workflow audit output
+.audit/

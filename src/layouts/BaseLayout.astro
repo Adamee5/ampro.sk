@@ -50,15 +50,20 @@ const poppins = [
   ["SemiBold", 600],
   ["Bold", 700],
 ] as const;
+// Poppins is shown in the hero next to a photo (the LCP), so no font preload.
+const fontPreloads: string[] = [];
 // Local fallbacks with Poppins' metrics, so swapping in the real font does
-// not move the text (no layout shift).
+// not move the text (no layout shift). Arial, Helvetica, Liberation Sans and
+// Arimo share Arial's metrics (Windows, macOS, Linux incl. Lighthouse).
+const ARIAL_METRICS = ["Arial", "Helvetica", "Liberation Sans", "Arimo"];
 const fallbacks = [
-  ["Arial", "400"],
-  ["Arial Bold", "600 700"],
-]
+  [ARIAL_METRICS, "400"],
+  [ARIAL_METRICS.map((name) => `${name} Bold`), "600 700"],
+] as const;
+const fallbackFaces = fallbacks
   .map(
-    ([local, weight]) =>
-      `@font-face{font-family:"Poppins Fallback";src:local("${local}");font-weight:${weight};size-adjust:105%;ascent-override:100%;descent-override:33.3%;line-gap-override:0%}`,
+    ([locals, weight]) =>
+      `@font-face{font-family:"Poppins Fallback";src:${locals.map((l) => `local("${l}")`).join(",")};font-weight:${weight};size-adjust:105%;ascent-override:100%;descent-override:33.3%;line-gap-override:0%}`,
   )
   .join("");
 const fontFaces =
@@ -67,7 +72,7 @@ const fontFaces =
       ([file, weight]) =>
         `@font-face{font-family:"Poppins";font-style:normal;font-display:swap;font-weight:${weight};src:url(${asset(`fonts/Poppins-${file}.woff2`)}) format("woff2")}`,
     )
-    .join("") + fallbacks;
+    .join("") + fallbackFaces;
 
 // Critical CSS is small (~9 kB brotli): inline it and skip two render-blocking
 // requests. The files stay the source of truth (Tailwind CLI output + global).
@@ -176,6 +181,7 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": grap
         />
       )
     }
+    {fontPreloads.map((href) => <link rel="preload" as="font" type="font/woff2" href={href} crossorigin />)}
     <style is:inline set:html={inlineCss}></style>
 
     <script is:inline>

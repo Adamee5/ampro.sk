@@ -34,13 +34,49 @@ export interface Project {
   images: GalleryImage[];
 }
 
+// Czech/Slovak typography: a one-letter preposition or conjunction (a, i, k,
+// o, s, u, v, z) never ends a line – the space after it becomes a no-break
+// space. Applied to all CMS text here, so editors never have to think of it;
+// URLs, paths, e-mails and identifiers are left alone.
+const NBSP_AFTER = /(?<=^|[\s\u00A0(„“"])([aikosuvzAIKOSUVZ]) +/g;
+// A number stays with the word it counts ("124 komponent").
+const NBSP_NUMBER = /(\d) +(?=\p{L})/gu;
+const SKIP_KEYS = new Set(["href", "moreHref", "src", "image", "slug", "recipients", "language", "lang", "date"]);
+function typeset<T>(value: T, key = ""): T {
+  if (typeof value === "string") {
+    if (SKIP_KEYS.has(key) || /^(\/|https?:|mailto:)/.test(value) || value.includes("@")) return value;
+    return value.replace(NBSP_AFTER, "$1\u00A0").replace(NBSP_NUMBER, "$1\u00A0") as T;
+  }
+  if (Array.isArray(value)) return value.map((item) => typeset(item, key)) as T;
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, typeset(v, k)])) as T;
+  }
+  return value;
+}
+
 // One file per project (CMS folder collection "Referencie"), sorted by `order`.
 const projects = Object.values(
   import.meta.glob<Project>("./content/projects/*.json", { eager: true, import: "default" }),
 ).sort((a, b) => (a.order ?? 99) - (b.order ?? 99) || a.title.localeCompare(b.title, settings.language));
 
-const company = settings.company;
-const address = `${company.street}, ${company.postalCode} ${company.city}`;
+// Lists the CMS may leave empty are typed explicitly: TypeScript infers an
+// empty JSON array as never[], which would break every consumer.
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+export interface OpeningHours {
+  days: string[];
+  opens: string;
+  closes: string;
+}
+
+const company = { ...settings.company, openingHours: settings.company.openingHours as OpeningHours[] };
+// Empty parts (e.g. no street address) are left out, not printed as ", ".
+const address = [company.street, [company.postalCode, company.city].filter(Boolean).join(" ")]
+  .filter(Boolean)
+  .join(", ");
 
 export const site = {
   name: settings.name,
@@ -66,13 +102,13 @@ export const site = {
     phones: company.contacts.map((person) => person.phone).filter(Boolean),
     emails: company.contacts.map((person) => person.email).filter(Boolean),
   },
-  home,
-  projectsPage,
-  projects: projects.map((project) => ({ ...project, images: project.images ?? [] })),
-  contactPage: contact,
-  pricing,
-  guide,
-  b2b,
+  home: typeset({ ...home, faq: home.faq as FaqItem[] }),
+  projectsPage: typeset(projectsPage),
+  projects: projects.map((project) => typeset({ ...project, images: project.images ?? [] })),
+  contactPage: typeset(contact),
+  pricing: typeset(pricing),
+  guide: typeset(guide),
+  b2b: typeset(b2b),
 };
 
 export type SiteData = typeof site;
