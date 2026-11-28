@@ -5,6 +5,7 @@ import SiteFooter from "@/components/SiteFooter.astro";
 import SectionIntro from "@/components/SectionIntro.astro";
 import InquiryForm from "@/components/InquiryForm.astro";
 import Icon from "@/components/ui/Icon.astro";
+import PriceDock from "@/components/PriceDock.astro";
 import ResponsiveImage from "@/components/ui/ResponsiveImage.astro";
 import { site, formatEuro } from "@/data/site";
 
@@ -55,7 +56,7 @@ const service = {
     </div>
 
     <div class="mt-10 grid gap-8 lg:mt-12 lg:grid-cols-[1fr_22rem] lg:items-start xl:grid-cols-[1fr_24rem]">
-      <form class="calc grid gap-6" data-calc aria-label="Výpočet ceny certifikátu">
+      <form class="calc grid gap-6" data-calc data-price-form aria-label="Výpočet ceny certifikátu">
         <fieldset class="calc__group">
           <legend class="calc__legend">Na čo certifikát potrebujete?</legend>
           <div class="calc__options sm:grid-cols-3">
@@ -140,7 +141,7 @@ const service = {
         </fieldset>
       </form>
 
-      <aside class="summary lg:sticky lg:top-[calc(var(--header-height)+1.5rem)]" aria-labelledby="calc-title">
+      <aside id="suhrn" class="summary lg:sticky lg:top-[calc(var(--header-height)+1.5rem)]" aria-labelledby="calc-title">
         <p id="calc-title" class="text-sm font-medium uppercase tracking-eyebrow text-energy">Cena certifikátu</p>
         <p class="summary__price" aria-live="polite" data-total>—</p>
         <p class="mt-1 text-sm text-muted" data-total-note></p>
@@ -167,6 +168,7 @@ const service = {
         messagePlaceholder="Adresa budovy, rok výstavby, termín kolaudácie alebo predaja, kedy je možná obhliadka…"
       />
     </div>
+    <PriceDock label="Cena certifikátu" tone="energy" />
   </main>
   <SiteFooter />
 </BaseLayout>

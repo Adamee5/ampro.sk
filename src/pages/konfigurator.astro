@@ -5,6 +5,7 @@ import SiteFooter from "@/components/SiteFooter.astro";
 import SectionIntro from "@/components/SectionIntro.astro";
 import InquiryForm from "@/components/InquiryForm.astro";
 import Icon from "@/components/ui/Icon.astro";
+import PriceDock from "@/components/PriceDock.astro";
 import { site, formatEuro } from "@/data/site";
 
 const { project, accuracy, note } = site.pricing;
@@ -27,7 +28,7 @@ const defaultItems = ["elektro", "zti", "uk", "peh"];
     <SectionIntro level={1} eyebrow="Konfigurátor ceny projektu" title={project.title} text={project.text} />
 
     <div class="mt-10 grid gap-8 lg:mt-12 lg:grid-cols-[1fr_22rem] lg:items-start xl:grid-cols-[1fr_24rem]">
-      <form class="config grid gap-6" data-config data-accuracy={accuracy} aria-label="Výber rozsahu projektu">
+      <form class="config grid gap-6" data-config data-price-form data-accuracy={accuracy} aria-label="Výber rozsahu projektu">
         <fieldset class="config__group">
           <legend class="config__legend"><span class="config__step">1</span> Čo staviate?</legend>
           <div class="config__options sm:grid-cols-2">
@@ -137,7 +138,7 @@ const defaultItems = ["elektro", "zti", "uk", "peh"];
         ))}
       </form>
 
-      <aside class="summary lg:sticky lg:top-[calc(var(--header-height)+1.5rem)]" aria-labelledby="summary-title">
+      <aside id="suhrn" class="summary lg:sticky lg:top-[calc(var(--header-height)+1.5rem)]" aria-labelledby="summary-title">
         <p id="summary-title" class="text-sm font-medium uppercase tracking-eyebrow text-primary">Orientačná cena</p>
         <p class="summary__price" aria-live="polite" data-total>—</p>
         <p class="summary__range" data-range></p>
@@ -164,6 +165,7 @@ const defaultItems = ["elektro", "zti", "uk", "peh"];
         messagePlaceholder="Obec / katastrálne územie, kedy chcete stavať, čo už máte (geometrický plán, regulatívy, inšpirácie)…"
       />
     </div>
+    <PriceDock label="Orientačná cena" />
   </main>
   <SiteFooter />
 </BaseLayout>
