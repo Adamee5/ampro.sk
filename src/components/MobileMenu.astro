@@ -13,6 +13,8 @@ const activePath =
   pathname === "/" ? "/" : pathname.endsWith("/") ? pathname : `${pathname}/`;
 ---
 
+<!-- Focus starts on the current page only: a focus ring on any other link reads as "you are here". -->
+
 <!--
   Mobile navigation on the native Popover API – no JavaScript for open/close:
   the button toggles the panel (popovertarget), Escape and a tap outside close
@@ -46,13 +48,20 @@ const activePath =
                   <a
                     href={withBase(item.href)}
                     class:list={[
-                      "mobile-menu__link flex cursor-pointer items-center border-b border-border py-3 leading-[1.1] no-underline transition-colors duration-fast ease-standard",
-                      isActive ? "text-primary" : "text-foreground hover:text-primary focus-visible:text-primary",
+                      "mobile-menu__link flex cursor-pointer items-center justify-between gap-3 px-3 py-3 leading-[1.1] no-underline transition-colors duration-fast ease-standard",
+                      isActive
+                        ? "rounded-xl bg-primary/15 font-semibold text-primary"
+                        : "border-b border-border text-foreground hover:text-primary focus-visible:text-primary",
                     ]}
                     aria-current={isActive ? "page" : undefined}
-                    autofocus={index === 0}
+                    autofocus={isActive}
                   >
-                    {item.label}
+                    <span>{item.label}</span>
+                    {isActive && (
+                      <span class="shrink-0 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-background" aria-hidden="true">
+                        Ste tu
+                      </span>
+                    )}
                   </a>
                 </li>
               );

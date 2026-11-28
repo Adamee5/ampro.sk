@@ -27,7 +27,7 @@ const tileSizes = "(min-width: 1024px) 320px, (min-width: 640px) 45vw, 92vw";
 const leadSizes = "(min-width: 1024px) 660px, 92vw";
 ---
 
-<section
+<section data-section={project.title}
   id={project.slug}
   class="grid gap-8 border-t border-border py-12 first:border-t-0 lg:grid-cols-[0.9fr_1.1fr] lg:gap-14"
   aria-labelledby={headingId}

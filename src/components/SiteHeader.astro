@@ -11,10 +11,16 @@ export interface Props {
 const { pathname } = Astro.props;
 const activePath =
   pathname === "/" ? "/" : pathname.endsWith("/") ? pathname : `${pathname}/`;
+const category =
+  activePath === "/"
+    ? "Úvodná stránka"
+    : activePath === "/sprievodca/"
+      ? "Sprievodca"
+      : (site.nav.find((item) => item.href === activePath)?.label ?? "");
 ---
 
 <!-- Logo art is white (for the dark hero); the light theme inverts it. -->
-<header class="glass sticky top-0 z-[var(--z-header)] h-(--header-height) border-b border-border">
+<header data-site-header class="glass sticky top-0 z-[var(--z-header)] h-(--header-height) border-b border-border">
   <div class="mx-auto flex h-full max-w-7xl items-center gap-2 px-4 min-[360px]:gap-4 sm:px-6 lg:gap-8 lg:px-8">
     <a
       href={withBase("/")}
@@ -30,8 +36,16 @@ const activePath =
         <span class="text-[0.7rem] font-semibold uppercase leading-tight tracking-wide text-primary min-[400px]:tracking-eyebrow sm:text-[0.8rem]">
           {site.headerName}
         </span>
-        <span class="hidden text-xs leading-snug text-muted min-[360px]:block sm:text-sm">
-          {site.tagline}
+        <!-- Which page the visitor is on; below it the tagline at the top, the current section once scrolled. -->
+        {category && <span class="site-category" aria-hidden="true">{category}</span>}
+        <span class="site-sub">
+          <span class="site-sub__tagline hidden text-[0.6875rem] leading-snug text-muted min-[360px]:block sm:text-sm">
+            {site.tagline}
+          </span>
+          <span class="site-sub__here text-[0.6875rem] font-medium leading-tight text-foreground sm:text-sm" aria-hidden="true">
+            <span class="site-sub__count tabular-nums text-primary" data-here-count></span>
+            <span data-here-label></span>
+          </span>
         </span>
         <span class="sr-only"> – úvodná stránka</span>
       </span>
@@ -71,7 +85,76 @@ const activePath =
       <MobileMenu pathname={pathname} />
     </div>
   </div>
+  <span class="site-progress" aria-hidden="true"></span>
 </header>
+
+<script>
+  // "Where am I?" – names the section under the header while scrolling.
+  const header = document.querySelector<HTMLElement>("[data-site-header]");
+  const label = header?.querySelector<HTMLElement>("[data-here-label]");
+  const count = header?.querySelector<HTMLElement>("[data-here-count]");
+  const main = document.querySelector("main");
+
+  if (header && label && count && main) {
+    const candidates = [...main.querySelectorAll<HTMLElement>("section, fieldset, #suhrn, [data-section]")];
+
+    const clean = (el: Element | null) => {
+      if (!el) return "";
+      const copy = el.cloneNode(true) as Element;
+      copy.querySelectorAll(".config__step, .guide__number").forEach((node) => node.remove());
+      return copy.textContent?.replace(/\s+/g, " ").trim() ?? "";
+    };
+    // Pages with numbered steps (configurator, guide) show their own step numbers.
+    const stepOf = (el: HTMLElement) =>
+      el.querySelector(":scope > legend :is(.config__step, .guide__number)")?.textContent?.trim() ?? "";
+    const numbered = candidates.some(stepOf);
+
+    const nameOf = (el: HTMLElement) =>
+      el.dataset.section ||
+      clean(el.querySelector(":scope > legend")) ||
+      clean(el.querySelector(".tracking-eyebrow")) ||
+      clean(el.querySelector("h2, h1"));
+
+    let queued = false;
+    const update = () => {
+      queued = false;
+      // Skip hidden blocks and the desktop price summary that sticks beside the form.
+      const items = candidates.filter(
+        (el) => el.getClientRects().length > 0 && getComputedStyle(el).position !== "sticky" && nameOf(el),
+      );
+      const line = header.offsetHeight + window.innerHeight * 0.3;
+      const atEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+      let index = -1;
+      items.forEach((el, i) => {
+        if (el.getBoundingClientRect().top <= line) index = i;
+      });
+      if (atEnd) index = items.length - 1;
+
+      // Pages that open with a plain heading count that intro as the first step.
+      const intro = items[0]?.querySelector("h1") || !main.querySelector("h1") ? "" : "Úvod";
+      const offset = intro ? 1 : 0;
+      const text = index >= 0 ? nameOf(items[index]!) : intro;
+      const show = window.scrollY > 80 && text !== "" && items.length > 0;
+
+      header.toggleAttribute("data-here", show);
+      if (!show) return;
+      label.textContent = text;
+      const step = index >= 0 ? stepOf(items[index]!) : "";
+      count.textContent = numbered
+        ? step && (step.includes("/") ? step : `Krok ${step}`)
+        : `${index + 1 + offset}/${items.length + offset}`;
+    };
+    const queue = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(update);
+    };
+
+    addEventListener("scroll", queue, { passive: true });
+    addEventListener("resize", queue, { passive: true });
+    queue();
+  }
+</script>
 
 <style>
   .site-logo {
@@ -104,6 +187,83 @@ const activePath =
     }
     to {
       background-position: 10% 0;
+    }
+  }
+
+  .site-category {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-foreground);
+  }
+
+  .site-sub__count {
+    margin-right: 0.4rem;
+  }
+
+  .site-sub__count:empty {
+    display: none;
+  }
+
+  .site-sub {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 1.1rem;
+  }
+
+  .site-sub > * {
+    grid-area: 1 / 1;
+    transition: opacity var(--duration-fast) var(--ease-standard);
+  }
+
+  .site-sub__here {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    max-width: 14rem;
+    opacity: 0;
+  }
+
+  header[data-here] .site-sub__here {
+    opacity: 1;
+  }
+
+  header[data-here] .site-sub__tagline {
+    opacity: 0;
+  }
+
+  /* Reading progress along the header's bottom edge (CSS only, where supported). */
+  .site-progress {
+    display: none;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .site-progress {
+      display: block;
+      position: absolute;
+      inset: auto 0 -1px;
+      height: 2px;
+      background: var(--color-primary);
+      transform-origin: left;
+      animation: site-progress linear both;
+    }
+
+    header .site-progress {
+      animation-timeline: scroll(root);
+    }
+  }
+
+  @keyframes site-progress {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
     }
   }
 </style>
