@@ -53,6 +53,7 @@ export const site = {
   keywords: settings.keywords,
   googleSiteVerification: settings.googleSiteVerification,
   gtmId: settings.analytics.gtmId,
+  turnstileSiteKey: settings.antispam.turnstileSiteKey,
   nav: [
     { href: "/konfigurator/", label: "Cena projektu" },
     { href: "/energeticky-certifikat/", label: "Energetický certifikát" },

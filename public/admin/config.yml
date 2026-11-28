@@ -526,6 +526,12 @@ collections:
             collapsed: true
             fields:
               - { name: gtmId, label: Google Tag Manager ID, widget: string, required: false, hint: "Napr. GTM-XXXXXXX. Prázdne = bez merania." }
+          - name: antispam
+            label: Ochrana formulárov
+            widget: object
+            collapsed: true
+            fields:
+              - { name: turnstileSiteKey, label: "Turnstile Site Key (Cloudflare)", widget: string, required: false, hint: "Verejný kľúč. Tajný kľúč patrí len do Cloudflare, nie sem." }
           - name: social
             label: Sociálne siete
             widget: object

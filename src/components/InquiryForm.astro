@@ -41,6 +41,7 @@ const {
 const page = site.contactPage;
 const inquiryTo = page.form.recipients?.length ? page.form.recipients : site.company.contacts.map((person) => person.email);
 const topics = page.form.topics ?? [];
+const turnstileKey = site.turnstileSiteKey;
 ---
 
 <section id="dopyt" class="rounded-3xl border border-border bg-surface p-6 shadow-card sm:p-7 md:p-9" aria-labelledby="inquiry-title" data-reveal="fade">
@@ -95,6 +96,10 @@ const topics = page.form.topics ?? [];
     <label class="inquiry__trap" aria-hidden="true">
       Nevypĺňajte <input name="website" type="text" tabindex="-1" autocomplete="off" />
     </label>
+    <!-- Decoy e-mail: not rendered for people (browser autofill skips it too), bots fill it. -->
+    <div class="inquiry__decoy" aria-hidden="true">
+      <input name="email_2" type="text" tabindex="-1" autocomplete="off" />
+    </div>
     <label class="inquiry__field">
       <span>Správa <span class="inquiry__mark" aria-hidden="true">*</span></span>
       <textarea name="message" rows="5" required minlength="10" maxlength="4000" placeholder={messagePlaceholder} aria-describedby="inquiry-message-error"></textarea>
@@ -115,6 +120,12 @@ const topics = page.form.topics ?? [];
         </label>
       )
     }
+    {turnstileKey && <div data-turnstile={turnstileKey} />}
+    <noscript>
+      <p class="text-sm text-muted">
+        Formulár potrebuje zapnutý JavaScript. Napíšte nám, prosím, na <a href={`mailto:${inquiryTo[0]}`}>{inquiryTo[0]}</a>.
+      </p>
+    </noscript>
     <div class="flex flex-wrap items-center gap-4">
       <Button as="button" type="submit" variant="primary" size="lg">{submitLabel}</Button>
       <p class="text-sm text-muted" role="status" aria-live="polite" data-inquiry-status></p>
@@ -219,6 +230,10 @@ const topics = page.form.topics ?? [];
     width: 1px;
     height: 1px;
     overflow: hidden;
+  }
+
+  .inquiry__decoy {
+    display: none;
   }
 
   .inquiry__field textarea {
@@ -360,6 +375,36 @@ const topics = page.form.topics ?? [];
     }
   });
 
+  // Cloudflare Turnstile (only when a site key is set): loaded on first use of
+  // the form, so pages stay fast and nothing third-party loads for readers.
+  type Turnstile = { render: (el: HTMLElement, options: object) => string; reset: (id: string) => void };
+  const turnstile = () => (window as unknown as { turnstile?: Turnstile }).turnstile;
+  const check = form?.querySelector<HTMLElement>("[data-turnstile]");
+  let widget: string | undefined;
+  let loading = false;
+  const loadCheck = () => {
+    if (!check || loading) return;
+    loading = true;
+    const script = document.createElement("script");
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+    script.async = true;
+    script.onload = () => {
+      widget = turnstile()?.render(check, {
+        sitekey: check.dataset.turnstile,
+        language: "sk",
+        theme: document.documentElement.dataset.theme || "auto",
+        // The full box is 300 px wide – narrow phones get the small one.
+        size: check.clientWidth < 300 ? "compact" : "flexible",
+      });
+    };
+    script.onerror = () => {
+      loading = false;
+      script.remove();
+    };
+    document.head.append(script);
+  };
+  form?.addEventListener("focusin", loadCheck, { once: true });
+
   const showSuccess = () => {
     if (!form || !success) return;
     form.reset();
@@ -409,6 +454,11 @@ const topics = page.form.topics ?? [];
     if (!form.reportValidity()) return;
     const data = new FormData(form);
     data.set("elapsed", String(Date.now() - startedAt));
+    if (check && !data.get("cf-turnstile-response")) {
+      loadCheck();
+      setStatus("Ešte overujeme, že nie ste robot. Počkajte chvíľu a odošlite znova.");
+      return;
+    }
     if (submit) submit.disabled = true;
     setStatus(files?.files?.length ? "Odosielam dopyt a prílohy…" : "Odosielam…");
     try {
@@ -430,6 +480,8 @@ const topics = page.form.topics ?? [];
       openMailto(data);
     } finally {
       if (submit) submit.disabled = false;
+      // A token works once – get a fresh one for the next attempt.
+      if (widget) turnstile()?.reset(widget);
     }
   });
 </script>

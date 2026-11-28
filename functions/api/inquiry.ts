@@ -30,16 +30,21 @@
  * or ?chyba=1#dopyt on an error.
  *
  * Spam (bots get a fake success and nothing is sent, so they learn nothing):
- *   - hidden `website` honeypot field,
- *   - `elapsed` (time on the page, measured by the page script) missing or
- *     under 3 s – script submissions only; plain form posts cannot carry it,
- *   - more than two links in the message.
+ *   - hidden honeypot fields `website` and `email_2` (a decoy e-mail),
+ *   - `elapsed` (time on the page, measured by the page script) under 3 s,
+ *   - more than two links in the message,
+ *   - a phone number in the "8 + ten digits" shape of the bulk spam campaigns.
+ * Plain form posts (no page script) are refused – that is how most bots post;
+ * visitors without JavaScript see a note with the e-mail address instead.
+ * Cloudflare Turnstile is checked once both the site key (settings.json →
+ * antispam.turnstileSiteKey) and TURNSTILE_SECRET_KEY are set.
  *
  * Environment (Pages → Settings → Variables and Secrets):
  *   RESEND_API_KEY  – Resend API key, "Sending access" only (encrypted)
  *   INQUIRY_FROM    – optional, defaults to "<site name> <web@<request domain>>"
  *                     (the domain must be verified in Resend)
  *   INQUIRY_TO      – optional comma-separated override of the recipients
+ *   TURNSTILE_SECRET_KEY – optional, secret of the Turnstile widget (encrypted)
  */
 import contact from "../../src/data/content/contact.json";
 import settings from "../../src/data/content/settings.json";
@@ -48,6 +53,7 @@ interface Env {
   RESEND_API_KEY?: string;
   INQUIRY_FROM?: string;
   INQUIRY_TO?: string;
+  TURNSTILE_SECRET_KEY?: string;
 }
 
 interface Context {
@@ -55,7 +61,7 @@ interface Context {
   env: Env;
 }
 
-type Field = "name" | "email" | "phone" | "topic" | "message" | "details" | "website" | "elapsed" | "back";
+type Field = "name" | "email" | "phone" | "topic" | "message" | "details" | "website" | "email_2" | "elapsed" | "back" | "cf-turnstile-response";
 type Inquiry = Record<Field, string> & { files: File[] };
 
 const MIN_FILL_MS = 3000;
@@ -99,6 +105,8 @@ async function readBody(request: Request): Promise<Inquiry> {
     message: field("message"),
     details: field("details"),
     website: field("website"),
+    email_2: field("email_2"),
+    "cf-turnstile-response": field("cf-turnstile-response"),
     elapsed: field("elapsed"),
     back: field("back"),
     files,
@@ -119,12 +127,32 @@ function validate(data: Inquiry): string | null {
   return null;
 }
 
-/** Honeypot, time on page and link count – true means "a bot, drop it silently". */
-function looksLikeSpam(data: Inquiry, viaScript: boolean): boolean {
-  const elapsed = Number(data.elapsed);
+/** Honeypots, link count and the campaign phone shape – true means "a bot, drop it silently". */
+function looksLikeSpam(data: Inquiry): boolean {
   const links = data.message.match(/https?:\/\/|www\./gi)?.length ?? 0;
-  const tooFast = viaScript && !(elapsed >= MIN_FILL_MS);
-  return Boolean(data.website) || tooFast || links > MAX_LINKS;
+  // e.g. 84289532941 – never a Slovak number (+421…, 00421…, 09…).
+  const campaignPhone = /^8\d{10}$/.test(data.phone.replace(/[\s()-]/g, ""));
+  return Boolean(data.website) || Boolean(data.email_2) || links > MAX_LINKS || campaignPhone;
+}
+
+/** True when Turnstile is not configured, or Cloudflare confirms the visitor's token. */
+async function passedTurnstile(env: Env, request: Request, token: string): Promise<boolean> {
+  if (!env.TURNSTILE_SECRET_KEY || !settings.antispam.turnstileSiteKey) return true;
+  if (!token) return false;
+  try {
+    const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      body: new URLSearchParams({
+        secret: env.TURNSTILE_SECRET_KEY,
+        response: token,
+        remoteip: request.headers.get("CF-Connecting-IP") ?? "",
+      }),
+    });
+    return ((await response.json()) as { success?: boolean }).success === true;
+  } catch (error) {
+    console.error("Turnstile error", error);
+    return false;
+  }
 }
 
 function recipients(env: Env): string[] {
@@ -242,10 +270,20 @@ export const onRequestPost = async ({ request, env }: Context): Promise<Response
     viaScript ? json(body, status) : body.ok ? back("#odoslane") : back("#dopyt", "?chyba=1");
 
   // Bots: pretend success, send nothing.
-  if (looksLikeSpam(data, viaScript)) return reply({ ok: true });
+  const tooFast = viaScript && !(Number(data.elapsed) >= MIN_FILL_MS);
+  if (looksLikeSpam(data) || tooFast) {
+    console.warn("Inquiry dropped as spam");
+    return reply({ ok: true });
+  }
+  // No page script – refuse openly, so a real person is not told it was sent.
+  if (!viaScript) return reply({ error: "Formulár vyžaduje JavaScript." }, 400);
 
   const invalid = validate(data);
   if (invalid) return reply({ error: invalid }, 400);
+
+  if (!(await passedTurnstile(env, request, data["cf-turnstile-response"]))) {
+    return reply({ error: "Nepodarilo sa overiť, že nie ste robot. Skúste to, prosím, znova." }, 400);
+  }
 
   const to = recipients(env);
   if (!env.RESEND_API_KEY || to.length === 0) {

@@ -59,5 +59,8 @@
   "analytics": {
     "gtmId": "GTM-KM6MM663"
   },
+  "antispam": {
+    "turnstileSiteKey": ""
+  },
   "googleSiteVerification": ""
 }
